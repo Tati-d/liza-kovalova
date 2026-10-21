@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "liza-kovalova",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/tg/*", "/p/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "liza-kovalova",
+      "database_id": "66ea909f-e535-4137-af2d-8a7222e5f2ad",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": { "enabled": true },
+  "vars": {
+    "APP_URL": "https://liza-kovalova.dyachektana.workers.dev",
+    // id закрытого канала (-100...) для каждой программы; одна программа = один канал,
+    // несколько программ могут указывать на один канал
+    "CHANNELS": "{}",
+    "SUPPORT_URL": "https://www.instagram.com/liza_kovalova_/"
+  }
+  // Секреты (wrangler secret put ...): STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
+  // BOT_TOKEN, TG_WEBHOOK_SECRET, ADMIN_KEY
+}
