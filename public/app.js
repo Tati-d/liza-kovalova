@@ -73,7 +73,7 @@ function homeView() {
             </div>
           </div>
           <div class="card-body">
-            <div><p>${esc(P.short)}</p><span class="price">${money(p.price)}</span></div>
+            <div><p>${esc(P.short)}</p><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span></div>
             <span class="go">${ARROW}</span>
           </div>
         </a>`;
@@ -114,28 +114,35 @@ function programView(p) {
   </section>
   <div class="p-body">
     ${P.desc ? `<section class="intro">${P.desc.map((d, k) => `<p data-reveal data-d="${k}">${esc(d)}</p>`).join("")}</section>` : ""}
-    <section>
+    ${P.goals ? `<section>
       <h3 data-reveal>${esc(P.goalsTitle || t.goalsTitle)}</h3>
       <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}"><span>${goal(g)}</span></li>`).join("")}</ol>
-    </section>
-    <section>
+    </section>` : ""}
+    ${P.aims ? `<section>
+      <h3 data-reveal>${esc(P.aimsTitle)}</h3>
+      <div class="aims">${P.aims.map(([icon, title, text], k) => `<article class="aim" data-reveal data-d="${k % 2}">
+        <span class="aim-ic" aria-hidden="true">${esc(icon)}</span><h4>${esc(title)}</h4><p>${esc(text)}</p></article>`).join("")}</div>
+    </section>` : ""}
+    ${p.contact ? "" : `<section>
       <h3 data-reveal>${esc(t.includedTitle)}</h3>
       <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
-    </section>
+    </section>`}
     <section>
-      <h3 data-reveal>${esc(t.howTitle)}</h3>
+      <h3 data-reveal>${esc(P.howTitle || t.howTitle)}</h3>
       <ol class="steps">${(P.how || t.how).map(([b, s], k) => `<li data-reveal data-d="${k}"><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("")}</ol>
     </section>
-    <div class="trust" data-reveal>
+    ${p.contact ? "" : `<div class="trust" data-reveal>
       <span>🔒 ${esc(t.secure)}</span>
       <span class="pay"><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span></span>
     </div>
-    ${inAppBrowser ? `<div class="hint" data-reveal>${esc(t.inApp)}</div>` : ""}
+    ${inAppBrowser ? `<div class="hint" data-reveal>${esc(t.inApp)}</div>` : ""}`}
   </div>
-  <div class="buybar">
+  ${p.contact
+    ? `<div class="buybar solo"><a class="btn" href="${esc(p.contact)}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a></div>`
+    : `<div class="buybar">
     <div><small>${esc(t.access)}</small><span class="price">${money(p.price)}</span></div>
     <button class="btn" id="buy" data-program="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>
-  </div>
+  </div>`}
   ${footer()}`;
 }
 

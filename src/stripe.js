@@ -36,7 +36,8 @@ export async function createCheckout(request, env) {
 
   const body = await request.json().catch(() => ({}));
   const program = findProgram(body.program);
-  if (!program) return json({ error: "unknown_program" }, 400);
+  // Курсы без цены (персональные тренировки) не продаются через сайт
+  if (!program || !program.price) return json({ error: "unknown_program" }, 400);
   const lang = body.lang === "uk" ? "uk" : "ru";
   const T = I18N[lang];
   const P = T.programs[program.id];

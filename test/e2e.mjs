@@ -117,6 +117,8 @@ try {
   check("utm и язык уходят в metadata", f?.get("metadata[utm_source]") === "instagram" && f?.get("metadata[lang]") === "uk");
   r = await post("/api/checkout", { program: "../../etc" }, { origin: BASE });
   check("неизвестная программа → 400", r.status === 400, r);
+  r = await post("/api/checkout", { program: "personal" }, { origin: BASE });
+  check("персональные тренировки не продаются через Stripe → 400", r.status === 400, r);
 
   // Настройка Telegram
   r = await post("/api/admin/setup", {}, { "x-admin-key": "wrong" });
