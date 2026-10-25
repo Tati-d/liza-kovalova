@@ -45,7 +45,6 @@ function homeView() {
   return `
   <section class="hero">
     ${aura()}
-    <span class="kicker" data-reveal>${esc(t.kicker)}</span>
     <h1 data-reveal data-d="1">${t.heroTitle}</h1>
     <p data-reveal data-d="2">${esc(t.heroSub)}</p>
     <p class="push" data-reveal data-d="3">${esc(t.heroPush)}</p>

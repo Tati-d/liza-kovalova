@@ -58,6 +58,7 @@ em { font-style: italic; color: var(--bronze); }
 .mark {
   font-family: var(--serif); font-size: 22px; text-decoration: none; letter-spacing: 0.01em;
 }
+.mark em { color: var(--bronze); margin-right: 2px; }
 .lang {
   display: inline-flex; padding: 3px; border-radius: 999px;
   background: rgba(28, 21, 18, 0.06);
@@ -133,7 +134,7 @@ svg { display: block; }
 }
 .kicker::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bronze); }
 .hero h1 {
-  font-family: var(--serif); font-weight: 400; margin: 18px 0 20px; max-width: 12ch;
+  font-family: var(--serif); font-weight: 400; margin: 0 0 20px; max-width: 12ch;
   font-size: clamp(48px, 13.5vw, 124px); line-height: 0.92; letter-spacing: -0.025em;
 }
 .hero p { margin: 0 0 14px; max-width: 38ch; color: var(--ink-2); font-size: 17px; }
