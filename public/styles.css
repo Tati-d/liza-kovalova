@@ -166,22 +166,6 @@ svg { display: block; }
 /* ---------- Карточки программ ---------- */
 .programs { display: grid; gap: 16px; }
 
-/* Крупная иконка в центре плитки: прорисовывается линией при появлении, потом плавно «дышит» */
-.tile-art { flex: 1; display: grid; place-items: center; padding: 14px 0 6px; }
-.tile-art svg {
-  width: 84px; height: 84px; color: var(--red); overflow: visible;
-  filter: drop-shadow(0 6px 10px rgba(168, 19, 31, 0.18));
-}
-.tile-art svg * { stroke-dasharray: 1; stroke-dashoffset: 1; }
-/* Цикл 6 с: прорисовка → пауза → линия «уходит» вперёд → снова прорисовка */
-.mini.in .tile-art svg * { animation: draw-loop 6s ease-in-out infinite; animation-delay: calc(var(--d, 0) * 400ms + 0.25s); }
-@keyframes draw-loop {
-  0% { stroke-dashoffset: 1; }
-  25%, 80% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -1; }
-}
-.mini.in .tile-art svg { animation: float 3.6s ease-in-out calc(var(--d, 0) * 160ms + 1.8s) infinite alternate; }
-@keyframes float { from { transform: translateY(0) rotate(0); } to { transform: translateY(-6px) rotate(-3deg); } }
 /* ---------- Карточки курсов (как на woolandsilk.co.uk): картинка слева, текст и кнопка справа ---------- */
 .minis { display: grid; gap: 14px; }
 .mini {
@@ -190,8 +174,6 @@ svg { display: block; }
 }
 .mini-art { position: relative; isolation: isolate; flex: none; width: 120px; display: grid; text-decoration: none; }
 .mini-art .aura { z-index: -1; }
-.mini-art .tile-art { padding: 0; }
-.mini-art .tile-art svg { width: 64px; height: 64px; }
 .mini-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 14px 18px; }
 .mini-title { text-decoration: none; color: var(--ink); }
 .mini-title h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 22px; line-height: 1.08; letter-spacing: -0.01em; }
@@ -406,5 +388,5 @@ svg { display: block; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   [data-reveal] { opacity: 1; transform: none; filter: none; }
-  .check circle, .check path, .tile-art svg * { stroke-dashoffset: 0; }
+  .check circle, .check path { stroke-dashoffset: 0; }
 }
