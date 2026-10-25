@@ -123,7 +123,7 @@ svg { display: block; }
 /* ---------- Hero ---------- */
 .hero {
   position: relative; display: flex; flex-direction: column;
-  padding: calc(env(safe-area-inset-top) + 96px) var(--gutter) 32px; isolation: isolate;
+  padding: calc(env(safe-area-inset-top) + 96px) var(--gutter) 20px; isolation: isolate;
 }
 .hero .aura { z-index: -1; --a1: #e2b49b; --a2: #b98468; --a3: #f1e2d6; }
 .hero .aura::after {
@@ -146,6 +146,7 @@ svg { display: block; }
 .hero p.note { margin: 16px 0 0; font-size: 14px; color: var(--muted); max-width: 34ch; }
 /* ---------- Секции ---------- */
 .section { padding: 36px var(--gutter); max-width: 1180px; margin: 0 auto; }
+#programs { padding-top: 4px; }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
 .section h2 {
   font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 12vw, 84px);
@@ -159,7 +160,7 @@ svg { display: block; }
 /* ---------- Карточки курсов (как на woolandsilk.co.uk): картинка слева, текст и кнопка справа ---------- */
 .minis { display: grid; gap: 14px; }
 .mini {
-  display: flex; min-height: 172px; background: #fff; border-radius: 18px; overflow: hidden;
+  display: flex; min-height: 140px; background: #fff; border-radius: 18px; overflow: hidden;
   box-shadow: 0 1px 0 #e8dcd2, 0 12px 30px -22px rgba(28, 21, 18, 0.35);
 }
 .mini-art { position: relative; isolation: isolate; flex: none; width: 120px; display: grid; text-decoration: none; }
@@ -168,10 +169,9 @@ svg { display: block; }
 .mini-title { text-decoration: none; color: var(--ink); }
 .mini-title h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 22px; line-height: 1.08; letter-spacing: -0.01em; }
 .mini-body small { font-size: 13px; color: var(--muted); }
-.mini-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
-.mini-row .price { font-size: 17px; }
+.mini-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 6px; }
 .mini-badge { font-size: 12px; font-weight: 700; color: var(--red); }
-.btn.sm { height: 40px; padding: 0 18px; font-size: 14px; align-self: flex-start; margin-top: 4px; box-shadow: 0 8px 20px -12px rgba(168, 19, 31, 0.6); }
+.btn.sm { height: 42px; padding: 0 20px; font-size: 16px; font-weight: 700; box-shadow: 0 8px 20px -12px rgba(168, 19, 31, 0.6); }
 .btn.sm.loading { opacity: 0.6; }
 .card {
   position: relative; display: block; text-decoration: none; border-radius: var(--r); overflow: hidden;

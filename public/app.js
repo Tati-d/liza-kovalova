@@ -66,10 +66,12 @@ function homeView() {
           <div class="mini-body">
             <a class="mini-title" href="/p/${p.id}" data-link><h3 data-vt="title-${p.id}">${esc(P.title)}</h3></a>
             <small>${esc(P.meta)}</small>
-            <div class="mini-row"><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span><span class="mini-badge">${esc(p.contact ? P.badge : t.badge)}</span></div>
-            ${p.contact
-              ? `<a class="btn sm" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.book)}</a>`
-              : `<button class="btn sm" data-buy="${p.id}">${esc(t.buyShort)}</button>`}
+            <div class="mini-row">
+              ${p.contact
+                ? `<a class="btn sm" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.book)}</a>`
+                : `<button class="btn sm" data-buy="${p.id}" aria-label="${esc(t.buyShort)} ${money(p.price)}">${money(p.price)}</button>`}
+              <span class="mini-badge">${esc(p.contact ? P.badge : t.badge)}</span>
+            </div>
           </div>
         </article>`;
       }).join("")}
