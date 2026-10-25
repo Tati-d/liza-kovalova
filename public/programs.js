@@ -1,7 +1,7 @@
 // Единственный источник цен: сайт показывает их, сервер берёт их же при создании оплаты.
 // price — в центах (999 = 9,99 €). accessDays — срок доступа к каналу с момента оплаты
 // (null — без ограничения). contact — вместо оплаты кнопка ведёт в личные сообщения.
-// media — фото или видео из тренировки: { type: "video", src: "/media/back.mp4", poster: "/media/back.jpg" }
+// media — фото или видео из тренировки (горизонтальное, 16:9): { type: "video", src: "/media/back.mp4", poster: "/media/back.jpg" }
 // или { type: "image", src: "/media/back.jpg" }; файлы кладутся в public/media/. Тексты — в i18n.js.
 export const CURRENCY = "eur";
 

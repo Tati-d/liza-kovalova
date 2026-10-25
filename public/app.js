@@ -124,10 +124,10 @@ function programView(p) {
     </div>
   </section>
   <div class="p-body">
-    ${mediaBlock(p)}
     ${p.contact
       ? `<div class="buy-inline solo" data-reveal>${cta}</div>`
       : `<div class="buy-inline" data-reveal><div><small>${esc(t.access)}</small><span class="price">${price}</span></div>${cta}</div>`}
+    ${mediaBlock(p)}
     ${p.contact ? "" : `<section>
       <h3 data-reveal>${esc(t.includedTitle)}</h3>
       <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
