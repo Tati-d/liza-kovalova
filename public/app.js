@@ -23,14 +23,6 @@ const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign"];
     try { sessionStorage.setItem("utm", JSON.stringify(Object.fromEntries(UTM_KEYS.map((k) => [k, q.get(k)])))); } catch {}
   }
 })();
-// Вариант дизайна блока курсов: 1 — большие карточки, 2 — плитки 2×2 с иконками.
-// ?design=2 в ссылке включает второй вариант (удобно отправить клиенту).
-let design = (() => {
-  const q = new URLSearchParams(location.search).get("design");
-  if (q === "1" || q === "2") { store.set("design", q); return q; }
-  return store.get("design") === "2" ? "2" : "1";
-})();
-
 const utm = () => { try { return JSON.parse(sessionStorage.getItem("utm") || "{}"); } catch { return {}; } };
 
 const inAppBrowser = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|BytedanceWebview/i.test(navigator.userAgent);
@@ -57,6 +49,9 @@ const ICON_PATHS = {
 const icon = (id) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(ICON_PATHS[id] || "").replace(/<(path|rect|circle)/g, '<$1 pathLength="1"')}</svg>`;
 
+// Ссылка «записаться»: для WhatsApp сразу подставляем текст сообщения на языке сайта
+const contactUrl = (p, P) => (/wa\.me/.test(p.contact) && P.waText ? `${p.contact}?text=${encodeURIComponent(P.waText)}` : p.contact);
+
 const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i></i></div>`;
 
 // ---------- Страницы ----------
@@ -68,9 +63,8 @@ function homeView() {
   <section class="hero">
     ${aura()}
     <h1 data-reveal data-d="1">${t.heroTitle}</h1>
-    <p data-reveal data-d="2">${esc(t.heroSub)}</p>
-    <p class="push" data-reveal data-d="3">${esc(t.heroPush)}</p>
-    <p data-reveal data-d="3">${esc(t.heroText)}</p>
+    <p class="push" data-reveal data-d="2">${esc(t.heroPush)}</p>
+    <p class="text" data-reveal data-d="3">${esc(t.heroText)}</p>
     <div data-reveal data-d="4"><a class="btn" href="#programs" data-scroll>${esc(t.heroCta)}<span class="ic">${ARROW}</span></a></div>
     <p class="note" data-reveal data-d="5">${esc(t.heroNote)}</p>
   </section>
@@ -80,25 +74,24 @@ function homeView() {
   <section class="section" id="programs">
     <h2 data-reveal>${esc(t.programsTitle)}</h2>
     <p class="lead" data-reveal data-d="2">${esc(t.programsSub)}</p>
-    ${design === "2" ? tilesView() : `<div class="programs">
+    <div class="minis">
       ${PROGRAMS.map((p, i) => {
         const P = t.programs[p.id];
-        return `<a class="card" href="/p/${p.id}" data-link data-reveal data-d="${i % 2}">
-          <div class="cover" data-vt="cover-${p.id}">
-            ${aura(p.id)}
-            <span class="num">0${i + 1}</span>
-            <div class="cover-title">
-              ${P.tag ? `<span class="cover-tag">${esc(P.tag)}</span>` : ""}
-              <h3 data-vt="title-${p.id}">${esc(P.title)}</h3>
-            </div>
+        return `<article class="mini" data-reveal data-d="${i}">
+          <a class="mini-art" href="/p/${p.id}" data-link data-vt="cover-${p.id}" aria-label="${esc(P.title)}">
+            ${aura(p.id)}<span class="tile-art">${icon(p.id)}</span>
+          </a>
+          <div class="mini-body">
+            <a class="mini-title" href="/p/${p.id}" data-link><h3 data-vt="title-${p.id}">${esc(P.title)}</h3></a>
+            <small>${esc(P.meta)}</small>
+            <div class="mini-row"><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span><span class="mini-badge">${esc(p.contact ? P.badge : t.badge)}</span></div>
+            ${p.contact
+              ? `<a class="btn sm" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.book)}</a>`
+              : `<button class="btn sm" data-buy="${p.id}">${esc(t.buyShort)}</button>`}
           </div>
-          <div class="card-body">
-            <div><p>${esc(P.short)}</p><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span></div>
-            <span class="go">${ARROW}</span>
-          </div>
-        </a>`;
+        </article>`;
       }).join("")}
-    </div>`}
+    </div>
   </section>
 
   <section class="section two">
@@ -114,28 +107,7 @@ function homeView() {
       ${t.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}
     </div>
   </section>
-  <div class="design-switch" role="group" aria-label="Design">
-    <span>Дизайн</span>
-    <button data-design="1" class="${design === "1" ? "on" : ""}">1</button><button data-design="2" class="${design === "2" ? "on" : ""}">2</button>
-  </div>
   ${footer()}`;
-}
-
-// Вариант 2: четыре плитки 2×2 на один экран телефона
-function tilesView() {
-  const t = T();
-  return `<div class="tiles">
-    ${PROGRAMS.map((p, i) => {
-      const P = t.programs[p.id];
-      return `<a class="tile" href="/p/${p.id}" data-link data-reveal data-d="${i}" data-vt="cover-${p.id}">
-        ${aura(p.id)}
-        <span class="tile-num">0${i + 1}</span>
-        <span class="tile-art">${icon(p.id)}</span>
-        <h3 data-vt="title-${p.id}">${esc(P.title)}</h3>
-        <span class="tile-foot"><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span><span class="go">${ARROW}</span></span>
-      </a>`;
-    }).join("")}
-  </div>`;
 }
 
 function programView(p) {
@@ -179,10 +151,10 @@ function programView(p) {
     ${inAppBrowser ? `<div class="hint" data-reveal>${esc(t.inApp)}</div>` : ""}`}
   </div>
   ${p.contact
-    ? `<div class="buybar solo"><a class="btn" href="${esc(p.contact)}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a></div>`
+    ? `<div class="buybar solo"><a class="btn" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a></div>`
     : `<div class="buybar">
     <div><small>${esc(t.access)}</small><span class="price">${money(p.price)}</span></div>
-    <button class="btn" id="buy" data-program="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>
+    <button class="btn" data-buy="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>
   </div>`}
   ${footer()}`;
 }
@@ -265,7 +237,7 @@ async function buy(btn) {
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ program: btn.dataset.program, lang, utm: utm() })
+      body: JSON.stringify({ program: btn.dataset.buy, lang, utm: utm() })
     });
     const data = await res.json();
     if (data.url) { location.href = data.url; return; }
@@ -338,14 +310,8 @@ function observeReveal() {
 }
 
 document.addEventListener("click", (e) => {
-  const buyBtn = e.target.closest("#buy");
+  const buyBtn = e.target.closest("[data-buy]");
   if (buyBtn) return buy(buyBtn);
-  const designBtn = e.target.closest("[data-design]");
-  if (designBtn) {
-    design = designBtn.dataset.design;
-    store.set("design", design);
-    return transition(draw);
-  }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {
     lang = langBtn.dataset.lang;

@@ -39,7 +39,7 @@ async function route(request, env) {
 
   if (pathname === "/api/checkout" && method === "POST") {
     // Сессии оплаты создаются только с нашего сайта
-    if (request.headers.get("origin") !== new URL(env.APP_URL).origin) return json({ error: "forbidden" }, 403);
+    if (request.headers.get("origin") !== url.origin) return json({ error: "forbidden" }, 403);
     return createCheckout(request, env);
   }
   if (pathname === "/api/access" && method === "GET") return getAccess(request, env);

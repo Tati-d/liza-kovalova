@@ -17,6 +17,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Домен lizakovalova.com лежит в другом аккаунте Cloudflare. Когда Worker будет в том же аккаунте,
+  // раскомментировать и поменять APP_URL на https://lizakovalova.com:
+  // "routes": [
+  //   { "pattern": "lizakovalova.com", "custom_domain": true },
+  //   { "pattern": "www.lizakovalova.com", "custom_domain": true }
+  // ],
   "observability": { "enabled": true },
   // Каждый час закрываем доступ с истёкшим сроком
   "triggers": { "crons": ["0 * * * *"] },
