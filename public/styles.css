@@ -183,7 +183,13 @@ svg { display: block; }
   filter: drop-shadow(0 6px 10px rgba(168, 19, 31, 0.18));
 }
 .tile-art svg * { stroke-dasharray: 1; stroke-dashoffset: 1; }
-.tile.in .tile-art svg * { animation: draw 1.6s var(--ease) forwards; animation-delay: calc(var(--d, 0) * 160ms + 0.25s); }
+/* Цикл 6 с: прорисовка → пауза → линия «уходит» вперёд → снова прорисовка */
+.tile.in .tile-art svg * { animation: draw-loop 6s ease-in-out infinite; animation-delay: calc(var(--d, 0) * 400ms + 0.25s); }
+@keyframes draw-loop {
+  0% { stroke-dashoffset: 1; }
+  25%, 80% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -1; }
+}
 .tile.in .tile-art svg { animation: float 3.6s ease-in-out calc(var(--d, 0) * 160ms + 1.8s) infinite alternate; }
 @keyframes float { from { transform: translateY(0) rotate(0); } to { transform: translateY(-6px) rotate(-3deg); } }
 .tile h3 {
