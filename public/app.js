@@ -45,6 +45,11 @@ function stepsHtml(how, withPay) {
   return `<ol class="steps">${how.map(([b, s], k) => `<li data-reveal data-d="${k}"><b>${esc(b)}</b><span>${esc(s)}</span>${withPay && k === 0 ? pay : ""}</li>`).join("")}</ol>`;
 }
 
+// Поддержка — WhatsApp Лизы с готовым текстом; юридические документы — страница Лизы в Canva (текст не меняем)
+const WHATSAPP = "https://wa.me/4915560740296";
+const LEGAL_URL = "https://dvb.my.canva.site/sl-imp-dat-social-liza";
+const supportUrl = () => `${WHATSAPP}?text=${encodeURIComponent(T().supportText)}`;
+
 // Ссылка «записаться»: для WhatsApp сразу подставляем текст сообщения на языке сайта
 const contactUrl = (p, P) => (/wa\.me/.test(p.contact) && P.waText ? `${p.contact}?text=${encodeURIComponent(P.waText)}` : p.contact);
 
@@ -169,8 +174,9 @@ function footer() {
     <p class="big">Liza<br><em>Kovalova</em></p>
     <nav>
       <a href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">${esc(t.support)}</a>
+      <a href="${esc(supportUrl())}" target="_blank" rel="noopener">${esc(t.support)}</a>
     </nav>
+    <a class="legal" href="${LEGAL_URL}" target="_blank" rel="noopener">Impressum · Datenschutz · AGB</a>
     <small>© ${new Date().getFullYear()} · ${esc(t.footer)}</small>
   </footer>`;
 }
@@ -186,7 +192,7 @@ function successView(state) {
   if (state.kind === "pending") return doneCard(`<div class="ring"></div><h1>${esc(t.checking)}</h1><p>${esc(t.pendingText)}</p>`);
   if (state.kind === "demo") return doneCard(`${CHECK}<h1>${esc(t.demoTitle)}</h1><p>${esc(t.demoText)}</p>`);
   if (state.kind === "error") return doneCard(`<h1>${esc(t.errorTitle)}</h1><p>${esc(t.errorText)}</p>
-    <a class="btn wide" href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">${esc(t.support)}<span class="ic">${ARROW}</span></a>`);
+    <a class="btn wide" href="${esc(supportUrl())}" target="_blank" rel="noopener">${esc(t.support)}<span class="ic">${ARROW}</span></a>`);
   const P = t.programs[state.program];
   if (state.kind === "expired") return doneCard(`<h1>${esc(t.expiredTitle)}</h1><p>${esc(t.expiredText)}</p>
     ${P ? `<a class="btn wide" href="/p/${state.program}" data-link>${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></a>` : ""}`);
