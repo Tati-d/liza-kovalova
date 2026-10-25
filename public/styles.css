@@ -136,12 +136,12 @@ svg { display: block; }
 }
 .kicker::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
 .hero h1 {
-  font-family: var(--serif); font-weight: 400; margin: 0 0 20px; max-width: 12ch;
-  font-size: clamp(42px, 11.5vw, 104px); line-height: 0.94; letter-spacing: -0.025em;
+  font-family: var(--serif); font-weight: 400; margin: 0 0 14px; max-width: 16ch;
+  font-size: clamp(34px, 9.2vw, 84px); line-height: 0.98; letter-spacing: -0.02em;
 }
 .hero p { margin: 0 0 14px; max-width: 38ch; color: var(--ink-2); font-size: 17px; }
 .hero p.push { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1.15; color: var(--red); margin: 6px 0 10px; }
-.hero p.text { font-size: 15.5px; line-height: 1.55; }
+.hero p.text { font-size: 14px; line-height: 1.5; }
 .hero .btn { margin-top: 14px; }
 .hero p.note { margin: 16px 0 0; font-size: 14px; color: var(--muted); max-width: 34ch; }
 /* ---------- Бегущая строка ---------- */
