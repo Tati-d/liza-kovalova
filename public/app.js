@@ -54,15 +54,11 @@ function homeView() {
     <h1 data-reveal data-d="1">${t.heroTitle}</h1>
     <p class="push" data-reveal data-d="2">${esc(t.heroPush)}</p>
     <p class="text" data-reveal data-d="3">${esc(t.heroText)}</p>
-    <div data-reveal data-d="4"><a class="btn" href="#programs" data-scroll>${esc(t.heroCta)}<span class="ic">${ARROW}</span></a></div>
-    <p class="note" data-reveal data-d="5">${esc(t.heroNote)}</p>
   </section>
 
   <div class="marquee" aria-hidden="true"><div class="marquee-track">${words.map((w) => `<span>${esc(w)}</span>`).join("")}</div></div>
 
   <section class="section" id="programs">
-    <h2 data-reveal>${esc(t.programsTitle)}</h2>
-    <p class="lead" data-reveal data-d="2">${esc(t.programsSub)}</p>
     <div class="minis">
       ${PROGRAMS.map((p, i) => {
         const P = t.programs[p.id];
@@ -330,12 +326,6 @@ document.addEventListener("click", (e) => {
     lang = langBtn.dataset.lang;
     store.set("lang", lang);
     return transition(draw);
-  }
-  const scroll = e.target.closest("[data-scroll]");
-  if (scroll) {
-    e.preventDefault();
-    document.querySelector(scroll.getAttribute("href"))?.scrollIntoView({ behavior: "smooth" });
-    return;
   }
   const link = e.target.closest("a[data-link]");
   if (link && !e.metaKey && !e.ctrlKey) {
