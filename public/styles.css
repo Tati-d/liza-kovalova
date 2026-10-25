@@ -123,7 +123,7 @@ svg { display: block; }
 /* ---------- Hero ---------- */
 .hero {
   position: relative; display: flex; flex-direction: column;
-  padding: calc(env(safe-area-inset-top) + 96px) var(--gutter) 20px; isolation: isolate;
+  padding: calc(env(safe-area-inset-top) + 74px) var(--gutter) 20px; isolation: isolate;
 }
 .hero .aura { z-index: -1; --a1: #e2b49b; --a2: #b98468; --a3: #f1e2d6; }
 .hero .aura::after {
