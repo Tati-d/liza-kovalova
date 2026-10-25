@@ -169,21 +169,25 @@ svg { display: block; }
 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tile {
   position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column;
-  min-height: 200px; padding: 12px; border-radius: 22px; border: 1px solid var(--line);
+  min-height: 232px; padding: 12px; border-radius: 22px; border: 1px solid var(--line);
   text-decoration: none; color: var(--ink); transition: transform 0.4s var(--ease);
   -webkit-tap-highlight-color: transparent;
 }
 .tile:active { transform: scale(0.97); }
 .tile .aura { z-index: -1; opacity: 0.85; }
-.tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.tile-ic {
-  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
-  background: #fff; color: var(--red); box-shadow: 0 6px 18px -10px rgba(28, 21, 18, 0.5);
+.tile-num { position: absolute; top: 12px; right: 14px; font-family: var(--serif); font-size: 16px; color: var(--ink-2); }
+/* Крупная иконка в центре плитки: прорисовывается линией при появлении, потом плавно «дышит» */
+.tile-art { flex: 1; display: grid; place-items: center; padding: 14px 0 6px; }
+.tile-art svg {
+  width: 84px; height: 84px; color: var(--red); overflow: visible;
+  filter: drop-shadow(0 6px 10px rgba(168, 19, 31, 0.18));
 }
-.tile-ic svg { width: 30px; height: 30px; }
-.tile-num { font-family: var(--serif); font-size: 16px; color: var(--ink-2); padding: 2px 4px; }
+.tile-art svg * { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.tile.in .tile-art svg * { animation: draw 1.6s var(--ease) forwards; animation-delay: calc(var(--d, 0) * 160ms + 0.25s); }
+.tile.in .tile-art svg { animation: float 3.6s ease-in-out calc(var(--d, 0) * 160ms + 1.8s) infinite alternate; }
+@keyframes float { from { transform: translateY(0) rotate(0); } to { transform: translateY(-6px) rotate(-3deg); } }
 .tile h3 {
-  margin: auto 0 10px; padding-top: 14px; font-family: var(--serif); font-weight: 400;
+  margin: 0 0 10px; font-family: var(--serif); font-weight: 400;
   font-size: 23px; line-height: 1.02; letter-spacing: -0.01em;
 }
 .tile-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
@@ -396,7 +400,8 @@ svg { display: block; }
   :root { --gutter: 40px; }
   .programs { grid-template-columns: 1fr 1fr; gap: 22px; }
   .tiles { grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .tile { min-height: 300px; padding: 18px; }
+  .tile { min-height: 320px; padding: 18px; }
+  .tile-art svg { width: 110px; height: 110px; }
   .tile h3 { font-size: 30px; }
   .programs .card:first-child, .programs .card:last-child:nth-child(even) { grid-column: span 2; }
   .aims { grid-template-columns: 1fr 1fr; }
@@ -410,5 +415,5 @@ svg { display: block; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   [data-reveal] { opacity: 1; transform: none; filter: none; }
-  .check circle, .check path { stroke-dashoffset: 0; }
+  .check circle, .check path, .tile-art svg * { stroke-dashoffset: 0; }
 }

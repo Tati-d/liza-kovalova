@@ -45,15 +45,17 @@ const BACK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke
 const TG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 3.6 2.9 10.8c-1.1.4-1.1 1.9 0 2.2l4.6 1.4 1.8 5.5c.3.9 1.4 1.1 2 .5l2.6-2.5 4.8 3.5c.8.6 2 .2 2.2-.8l3.1-15.6c.2-1-.8-1.8-1.6-1.4ZM9.8 14.6l-.4 3.6-1.3-4 9.4-6.9-7.7 7.3Z"/></svg>`;
 // Пункт результата: строка или [акцентная фраза, продолжение] — акцент выделяется жирным
 const goal = (g) => (Array.isArray(g) ? `<b>${esc(g[0])}</b> — ${esc(g[1])}` : esc(g));
-// Иконки курсов: линейные 24×24. spine — своя, остальные из Tabler Icons (MIT, tabler.io/icons)
+// Иконки курсов: линейные 24×24. back (позвоночник) — своя, остальные из Tabler Icons
+// (лицензия MIT, текст лицензии — public/licenses.txt, должен оставаться на сайте)
 const ICON_PATHS = {
   back: '<rect x="8.5" y="2.5" width="7" height="3" rx="1.5"/><rect x="9" y="7.5" width="7" height="3" rx="1.5"/><rect x="8.5" y="12.5" width="7" height="3" rx="1.5"/><path d="M9.5 18h5l-2.5 3.5z"/>',
   splits: '<path d="M7 7a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M13 21l1 -9l7 -6"/><path d="M3 11h6l5 1"/><path d="M11.5 8.5l4.5 -3.5"/>',
   pilates: '<path d="M12 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M4 20h4l1.5 -3"/><path d="M17 20l-1 -5h-5l1 -7"/><path d="M4 10l4 -1l4 -1l4 1.5l4 1.5"/>',
   personal: '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h.5"/><path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z"/>'
 };
+// pathLength="1" у каждой линии — для анимации «прорисовки»
 const icon = (id) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[id] || ""}</svg>`;
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(ICON_PATHS[id] || "").replace(/<(path|rect|circle)/g, '<$1 pathLength="1"')}</svg>`;
 
 const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i></i></div>`;
 
@@ -127,7 +129,8 @@ function tilesView() {
       const P = t.programs[p.id];
       return `<a class="tile" href="/p/${p.id}" data-link data-reveal data-d="${i}" data-vt="cover-${p.id}">
         ${aura(p.id)}
-        <span class="tile-top"><span class="tile-ic">${icon(p.id)}</span><span class="tile-num">0${i + 1}</span></span>
+        <span class="tile-num">0${i + 1}</span>
+        <span class="tile-art">${icon(p.id)}</span>
         <h3 data-vt="title-${p.id}">${esc(P.title)}</h3>
         <span class="tile-foot"><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span><span class="go">${ARROW}</span></span>
       </a>`;
@@ -191,6 +194,7 @@ function footer() {
     <nav>
       <a href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">${esc(t.support)}</a>
+      <a href="/licenses.txt" target="_blank" rel="noopener">Licenses</a>
     </nav>
     <small>© ${new Date().getFullYear()} · ${esc(t.footer)}</small>
   </footer>`;
