@@ -75,9 +75,8 @@ function homeView() {
             <small>${esc(P.meta)}</small>
             <div class="mini-row">
               ${p.contact
-                ? `<a class="btn sm wa" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.bookWa)}</a>`
-                : `<span class="mini-badge">${esc(t.badge)}</span>
-                   <button class="btn sm" data-buy="${p.id}" aria-label="${esc(t.buyShort)} ${money(p.price)}">${money(p.price)}</button>`}
+                ? `<a class="btn sm" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.bookWa)}</a>`
+                : `<button class="btn sm" data-buy="${p.id}">${esc(t.getAccess.replace("{price}", money(p.price)))}</button>`}
             </div>
           </div>
         </article>`;

@@ -163,17 +163,16 @@ svg { display: block; }
   display: flex; min-height: 140px; background: #fff; border-radius: 18px; overflow: hidden;
   box-shadow: 0 1px 0 #e8dcd2, 0 12px 30px -22px rgba(28, 21, 18, 0.35);
 }
-.mini-art { position: relative; isolation: isolate; flex: none; width: 120px; display: grid; text-decoration: none; }
+.mini-art { position: relative; isolation: isolate; flex: none; width: 104px; display: grid; text-decoration: none; }
 .mini-art .aura { z-index: -1; }
-.mini-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 14px 18px; }
+.mini-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 16px 14px 14px 16px; }
 .mini-title { text-decoration: none; color: var(--ink); }
 .mini-title h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 22px; line-height: 1.08; letter-spacing: -0.01em; }
 .mini-body small { font-size: 13px; color: var(--muted); }
-.mini-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: auto; padding-top: 6px; }
-.mini-badge { font-size: 12px; font-weight: 700; color: var(--red); }
+.mini-row { margin-top: auto; padding-top: 8px; }
+.mini .btn.sm { width: 100%; padding: 0 10px; font-size: 13.5px; white-space: nowrap; letter-spacing: 0; }
 .btn.sm { height: 42px; padding: 0 20px; font-size: 16px; font-weight: 700; box-shadow: 0 8px 20px -12px rgba(168, 19, 31, 0.6); }
 .btn.sm.loading { opacity: 0.6; }
-.btn.sm.wa { font-size: 14px; padding: 0 16px; white-space: nowrap; }
 .card {
   position: relative; display: block; text-decoration: none; border-radius: var(--r); overflow: hidden;
   background: var(--paper); border: 1px solid var(--line);
