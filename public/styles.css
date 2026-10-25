@@ -144,16 +144,6 @@ svg { display: block; }
 .hero p.text { font-size: 14px; line-height: 1.5; }
 .hero .btn { margin-top: 14px; }
 .hero p.note { margin: 16px 0 0; font-size: 14px; color: var(--muted); max-width: 34ch; }
-/* ---------- Бегущая строка ---------- */
-.marquee { overflow: hidden; border-block: 1px solid var(--line); padding: 16px 0; }
-.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
-.marquee span {
-  font-family: var(--serif); font-style: italic; font-size: 30px; white-space: nowrap; padding-right: 28px;
-  display: inline-flex; align-items: center; gap: 28px;
-}
-.marquee span::after { content: "✦"; font-style: normal; font-size: 13px; color: var(--red); }
-@keyframes marquee { to { transform: translateX(-50%); } }
-
 /* ---------- Секции ---------- */
 .section { padding: 36px var(--gutter); max-width: 1180px; margin: 0 auto; }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }

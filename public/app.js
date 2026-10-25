@@ -47,7 +47,6 @@ const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i
 
 function homeView() {
   const t = T();
-  const words = [...t.marquee, ...t.marquee];
   return `
   <section class="hero">
     ${aura()}
@@ -55,8 +54,6 @@ function homeView() {
     <p class="push" data-reveal data-d="2">${esc(t.heroPush)}</p>
     <p class="text" data-reveal data-d="3">${esc(t.heroText)}</p>
   </section>
-
-  <div class="marquee" aria-hidden="true"><div class="marquee-track">${words.map((w) => `<span>${esc(w)}</span>`).join("")}</div></div>
 
   <section class="section" id="programs">
     <div class="minis">
