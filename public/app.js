@@ -34,6 +34,7 @@ const money = (cents) =>
   `${new Intl.NumberFormat(T().locale, { minimumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100)}\u00a0${SYMBOL[CURRENCY] || CURRENCY.toUpperCase()}`;
 const ARROW = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
 const BACK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>`;
+const PLAY = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5 .86l10.5 -6.5a1 1 0 0 0 0 -1.72l-10.5 -6.5A1 1 0 0 0 8 5.5z"/></svg>`;
 const TG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 3.6 2.9 10.8c-1.1.4-1.1 1.9 0 2.2l4.6 1.4 1.8 5.5c.3.9 1.4 1.1 2 .5l2.6-2.5 4.8 3.5c.8.6 2 .2 2.2-.8l3.1-15.6c.2-1-.8-1.8-1.6-1.4ZM9.8 14.6l-.4 3.6-1.3-4 9.4-6.9-7.7 7.3Z"/></svg>`;
 // Пункт результата: строка или [акцентная фраза, продолжение] — акцент выделяется жирным
 const goal = (g) => (Array.isArray(g) ? `<b>${esc(g[0])}</b> — ${esc(g[1])}` : esc(g));
@@ -98,10 +99,25 @@ function homeView() {
   ${footer()}`;
 }
 
+// Фото или видео из тренировки: media в programs.js. Пока файла нет — красивая заглушка
+function mediaBlock(p) {
+  const t = T();
+  const m = p.media;
+  if (m?.type === "video") {
+    return `<figure class="media"><video src="${esc(m.src)}" ${m.poster ? `poster="${esc(m.poster)}"` : ""} autoplay muted loop playsinline preload="metadata"></video></figure>`;
+  }
+  if (m?.type === "image") return `<figure class="media"><img src="${esc(m.src)}" alt="" loading="lazy"></figure>`;
+  return `<figure class="media" data-reveal>${aura(p.id)}<span class="play">${PLAY}</span><figcaption>${esc(t.mediaSoon)}</figcaption></figure>`;
+}
+
 function programView(p) {
   const t = T();
   const P = t.programs[p.id];
   const i = PROGRAMS.indexOf(p);
+  const cta = p.contact
+    ? `<a class="btn" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a>`
+    : `<button class="btn" data-buy="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>`;
+  const price = p.price ? money(p.price) : esc(P.priceLabel);
   return `
   <section class="p-hero" data-vt="cover-${p.id}">
     ${aura(p.id)}
@@ -109,25 +125,28 @@ function programView(p) {
     <div class="p-hero-in">
       <span class="kicker">0${i + 1}${P.tag ? ` · ${esc(P.tag)}` : ""}</span>
       <h1 data-vt="title-${p.id}">${esc(P.title)}</h1>
-      <p data-reveal data-d="2">${esc(P.short)}</p>
-      ${P.lead ? `<p data-reveal data-d="3">${esc(P.lead)}</p>` : ""}
+      <p class="short" data-reveal data-d="2">${esc(P.short)}${P.lead ? ` ${esc(P.lead)}` : ""}</p>
     </div>
   </section>
   <div class="p-body">
+    ${mediaBlock(p)}
+    ${p.contact
+      ? `<div class="buy-inline solo" data-reveal>${cta}</div>`
+      : `<div class="buy-inline" data-reveal><div><small>${esc(t.access)}</small><span class="price">${price}</span></div>${cta}</div>`}
+    ${p.contact ? "" : `<section>
+      <h3 data-reveal>${esc(t.includedTitle)}</h3>
+      <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
+    </section>`}
+    ${P.aims ? `<section>
+      <h3 data-reveal>${esc(P.aimsTitle)}</h3>
+      <div class="aims">${P.aims.map(([emoji, title, text], k) => `<article class="aim" data-reveal data-d="${k % 2}">
+        <span class="aim-ic" aria-hidden="true">${esc(emoji)}</span><h4>${esc(title)}</h4><p>${esc(text)}</p></article>`).join("")}</div>
+    </section>` : ""}
     ${P.desc ? `<section class="intro">${P.desc.map((d, k) => `<p data-reveal data-d="${k}">${esc(d)}</p>`).join("")}</section>` : ""}
     ${P.goals ? `<section>
       <h3 data-reveal>${esc(P.goalsTitle || t.goalsTitle)}</h3>
       <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}"><span>${goal(g)}</span></li>`).join("")}</ol>
     </section>` : ""}
-    ${P.aims ? `<section>
-      <h3 data-reveal>${esc(P.aimsTitle)}</h3>
-      <div class="aims">${P.aims.map(([icon, title, text], k) => `<article class="aim" data-reveal data-d="${k % 2}">
-        <span class="aim-ic" aria-hidden="true">${esc(icon)}</span><h4>${esc(title)}</h4><p>${esc(text)}</p></article>`).join("")}</div>
-    </section>` : ""}
-    ${p.contact ? "" : `<section>
-      <h3 data-reveal>${esc(t.includedTitle)}</h3>
-      <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
-    </section>`}
     <section>
       <h3 data-reveal>${esc(P.howTitle || t.howTitle)}</h3>
       <ol class="steps">${(P.how || t.how).map(([b, s], k) => `<li data-reveal data-d="${k}"><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("")}</ol>
@@ -139,11 +158,8 @@ function programView(p) {
     ${inAppBrowser ? `<div class="hint" data-reveal>${esc(t.inApp)}</div>` : ""}`}
   </div>
   ${p.contact
-    ? `<div class="buybar solo"><a class="btn" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a></div>`
-    : `<div class="buybar">
-    <div><small>${esc(t.access)}</small><span class="price">${money(p.price)}</span></div>
-    <button class="btn" data-buy="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>
-  </div>`}
+    ? `<div class="buybar solo away">${cta}</div>`
+    : `<div class="buybar away"><div><small>${esc(t.access)}</small><span class="price">${price}</span></div>${cta}</div>`}
   ${footer()}`;
 }
 
@@ -269,6 +285,16 @@ function draw() {
   app.querySelectorAll("[data-d]").forEach((el) => el.style.setProperty("--d", el.dataset.d));
   app.querySelectorAll("[data-vt]").forEach((el) => (el.style.viewTransitionName = el.dataset.vt));
   observeReveal();
+  watchBuybar();
+}
+
+let barIo;
+function watchBuybar() {
+  barIo?.disconnect();
+  const inline = app.querySelector(".buy-inline"), bar = app.querySelector(".buybar");
+  if (!inline || !bar) return;
+  barIo = new IntersectionObserver(([e]) => bar.classList.toggle("away", e.isIntersecting || e.boundingClientRect.top > 0));
+  barIo.observe(inline);
 }
 
 function transition(update) {

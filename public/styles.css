@@ -273,7 +273,30 @@ svg { display: block; }
   font-size: clamp(48px, 14vw, 128px); line-height: 0.92; letter-spacing: -0.025em;
 }
 .p-hero p { margin: 0; color: var(--ink-2); font-size: 17px; max-width: 34ch; }
-.p-hero p + p { margin-top: 10px; }
+.p-hero p.short { font-size: 15px; line-height: 1.5; max-width: none; }
+
+/* Фото/видео из тренировки и кнопка покупки сразу под ним */
+.media {
+  position: relative; isolation: isolate; margin: 0; aspect-ratio: 4 / 5; border-radius: 24px; overflow: hidden;
+  display: grid; place-items: center; background: var(--paper);
+}
+.media .aura { z-index: -1; }
+.media video, .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media .play {
+  width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; padding-left: 4px;
+  background: rgba(255, 255, 255, 0.9); color: var(--red); box-shadow: 0 12px 30px -14px rgba(168, 19, 31, 0.6);
+}
+.media figcaption { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font-size: 13px; color: var(--ink-2); }
+.buy-inline {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: -16px;
+  padding: 12px 12px 12px 20px; border-radius: 999px; background: #fff; box-shadow: 0 1px 0 #e8dcd2, 0 12px 30px -22px rgba(28, 21, 18, 0.35);
+}
+.buy-inline small { display: block; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.buy-inline .price { font-size: 22px; white-space: nowrap; }
+.buy-inline .btn { height: 52px; padding-left: 20px; gap: 10px; font-size: 15px; white-space: nowrap; }
+.buy-inline .btn .ic { width: 36px; height: 36px; }
+.buy-inline.solo { padding: 8px; }
+.buy-inline.solo .btn { width: 100%; justify-content: space-between; }
 .intro p { margin: 0 0 14px; font-family: var(--serif); font-size: 26px; line-height: 1.2; color: var(--ink); }
 .intro p:last-child { margin-bottom: 0; }
 .back {
@@ -322,6 +345,9 @@ svg { display: block; }
 .buybar small, .buybar .price { white-space: nowrap; }
 .buybar .btn { min-width: 0; }
 @media (max-width: 400px) {
+  .buy-inline small { display: none; }
+  .buy-inline { padding-left: 18px; }
+  .buy-inline .btn { padding-left: 18px; gap: 8px; }
   /* Длинная кнопка курса («Хочу эффект модели») должна влезать на узких телефонах */
   .buybar { padding-left: 18px; }
   .buybar small { display: none; }
@@ -329,6 +355,8 @@ svg { display: block; }
 }
 .buybar .btn .ic { width: 36px; height: 36px; }
 .buybar ~ .foot { padding-bottom: calc(env(safe-area-inset-bottom) + 120px); }
+.buybar { transition: translate 0.45s var(--ease), opacity 0.45s var(--ease); }
+.buybar.away { translate: 0 160%; opacity: 0; pointer-events: none; }
 .buybar.solo { padding: 8px; }
 .buybar.solo .btn { width: 100%; justify-content: space-between; }
 @keyframes rise { from { transform: translateY(140%); opacity: 0; } }
