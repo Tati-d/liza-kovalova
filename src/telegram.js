@@ -67,8 +67,10 @@ export async function telegramWebhook(request, env) {
   if (joined) {
     const order = await env.DB.prepare("SELECT * FROM orders WHERE invite_link = ?").bind(cm.invite_link.invite_link).first();
     if (order && isActive(order)) {
-      await env.DB.prepare("UPDATE orders SET tg_user_id = ?, joined_at = ? WHERE id = ?")
-        .bind(cm.new_chat_member.user.id, now(), order.id).run();
+      const u = cm.new_chat_member.user;
+      const name = [u.first_name, u.last_name].filter(Boolean).join(" ").slice(0, 128) || null;
+      await env.DB.prepare("UPDATE orders SET tg_user_id = ?, tg_username = ?, tg_name = ?, joined_at = ? WHERE id = ?")
+        .bind(u.id, u.username ? String(u.username).slice(0, 64) : null, name, now(), order.id).run();
     } else if (order) {
       // Вступил по ссылке отозванного или истёкшего заказа — убираем
       await kick(env, cm.chat.id, cm.new_chat_member.user.id);

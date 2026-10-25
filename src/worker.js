@@ -28,7 +28,10 @@ async function resend(request, env) {
   if (typeof email !== "string" || !email.includes("@")) return json({ error: "email_required" }, 400);
   const { results } = await env.DB.prepare("SELECT * FROM orders WHERE lower(email) = lower(?) AND status IN ('paid', 'expired')").bind(email.trim()).all();
   const out = [];
-  for (const o of results) out.push({ order: o.id, program: o.program, ...(await inviteFor(env, o)) });
+  for (const o of results) {
+    const telegram = o.tg_user_id ? { id: o.tg_user_id, username: o.tg_username, name: o.tg_name } : null;
+    out.push({ order: o.id, program: o.program, telegram, ...(await inviteFor(env, o)) });
+  }
   return json({ orders: out });
 }
 

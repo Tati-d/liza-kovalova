@@ -83,7 +83,7 @@ const tgHook = (update, secret = SECRETS.TG_WEBHOOK_SECRET) =>
   post("/tg/webhook", update, { "x-telegram-bot-api-secret-token": secret });
 const joinVia = (userId, link) => tgHook({ chat_member: {
   chat: { id: Number(CHANNEL) }, invite_link: { invite_link: link },
-  new_chat_member: { status: "member", user: { id: userId } }
+  new_chat_member: { status: "member", user: { id: userId, username: `user${userId}`, first_name: "Anna", last_name: "K" } }
 } });
 const lastTg = (method) => [...calls].reverse().find((c) => c.tg === method);
 const clear = () => (calls.length = 0);
@@ -170,6 +170,7 @@ try {
   // Поддержка: повторная выдача по email
   r = await post("/api/admin/resend", { email: "BUYER@example.com" }, { "x-admin-key": SECRETS.ADMIN_KEY });
   check("поддержка находит заказ по email", r.data.orders?.length === 1 && r.data.orders[0].status === "joined", r);
+  check("в заказе видно, кто вступил: Telegram ID, @username и имя", r.data.orders?.[0]?.telegram?.id === 111 && r.data.orders[0].telegram.username === "user111" && r.data.orders[0].telegram.name === "Anna K", r);
   r = await post("/api/admin/resend", { email: "buyer@example.com" });
   check("resend без ключа → 403", r.status === 403, r);
 
