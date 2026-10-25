@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "liza-kovalova",
+  // Аккаунт Cloudflare клиента (Elastica2024), там же домен lizakovalova.com
+  "account_id": "e643e38a61e822f5a6e213879af9c3d7",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-01",
   "assets": {
@@ -13,21 +15,19 @@
     {
       "binding": "DB",
       "database_name": "liza-kovalova",
-      "database_id": "66ea909f-e535-4137-af2d-8a7222e5f2ad",
+      "database_id": "ea1c42d4-1ba3-4b79-8bc4-098b9afaeb5e",
       "migrations_dir": "migrations"
     }
   ],
-  // Домен lizakovalova.com лежит в другом аккаунте Cloudflare. Когда Worker будет в том же аккаунте,
-  // раскомментировать и поменять APP_URL на https://lizakovalova.com:
-  // "routes": [
-  //   { "pattern": "lizakovalova.com", "custom_domain": true },
-  //   { "pattern": "www.lizakovalova.com", "custom_domain": true }
-  // ],
+  "routes": [
+    { "pattern": "lizakovalova.com", "custom_domain": true },
+    { "pattern": "www.lizakovalova.com", "custom_domain": true }
+  ],
   "observability": { "enabled": true },
   // Каждый час закрываем доступ с истёкшим сроком
   "triggers": { "crons": ["0 * * * *"] },
   "vars": {
-    "APP_URL": "https://liza-kovalova.dyachektana.workers.dev",
+    "APP_URL": "https://lizakovalova.com",
     // id закрытого канала (-100...) для каждой программы; одна программа = один канал,
     // несколько программ могут указывать на один канал
     "CHANNELS": "{}"

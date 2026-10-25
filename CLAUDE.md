@@ -4,7 +4,7 @@
 
 ## Стек
 Cloudflare Worker (`src/`, plain JS, без сборки) + D1 (`migrations/`) + статический фронт (`public/`, vanilla ES-модули).
-Прод: https://liza-kovalova.dyachektana.workers.dev
+Прод: https://lizakovalova.com (аккаунт Cloudflare клиента Elastica2024, `account_id` в `wrangler.jsonc`)
 
 ## Файлы
 - `public/programs.js` — программы и цены (единый источник для сайта и сервера), `public/i18n.js` — тексты RU/UA.

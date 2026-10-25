@@ -1,7 +1,7 @@
 # Liza Kovalova — онлайн-тренировки
 
 Лендинг с продажей программ (RU / UA) и выдачей доступа в закрытые Telegram-каналы.
-Прод: https://liza-kovalova.dyachektana.workers.dev
+Прод: https://lizakovalova.com
 
 ## Как устроено
 1. Покупатель открывает курс (`/p/back` — «Эффект модели», `/p/splits` — «Шпагат — это легко!», `/p/pilates` — «Пилатес без отговорок») и жмёт кнопку покупки.
@@ -23,7 +23,7 @@
 ## Подключение (один раз)
 **Stripe**
 1. Dashboard → Developers → API keys → секретный ключ: `npx wrangler secret put STRIPE_SECRET_KEY`.
-2. Developers → Webhooks → endpoint `https://liza-kovalova.dyachektana.workers.dev/api/stripe/webhook`, события:
+2. Developers → Webhooks → endpoint `https://lizakovalova.com/api/stripe/webhook`, события:
    `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `charge.refunded`, `charge.dispute.created`.
    Signing secret: `npx wrangler secret put STRIPE_WEBHOOK_SECRET`.
 3. Settings → Payment methods: включить Apple Pay, Google Pay, Link (и при желании Revolut Pay, Klarna и др.).
@@ -34,21 +34,20 @@
 3. id каналов (`-100…`) вписать в `CHANNELS` в `wrangler.jsonc`, например `{"back":"-100123…","splits":"-100456…","pilates":"-100789…"}`.
 4. `npx wrangler secret put TG_WEBHOOK_SECRET` (любая длинная случайная строка) и `npx wrangler secret put ADMIN_KEY`.
 5. `npm run deploy`, затем:
-   `curl -X POST -H "x-admin-key: …" https://liza-kovalova.dyachektana.workers.dev/api/admin/setup` — подпишет вебхук и проверит права бота в каждом канале.
+   `curl -X POST -H "x-admin-key: …" https://lizakovalova.com/api/admin/setup` — подпишет вебхук и проверит права бота в каждом канале.
 
 Пока `STRIPE_SECRET_KEY` не задан, кнопка оплаты работает в демо-режиме: деньги не списываются, доступ не выдаётся.
 
-## Домен lizakovalova.com
-Домен зарегистрирован в другом аккаунте Cloudflare, чем Worker (dyachektana@gmail.com). Custom Domain работает только в одном аккаунте:
-либо пригласить dyachektana@gmail.com в аккаунт с доменом (Manage Account → Members, роль Administrator) и задеплоить туда,
-либо перенести домен в этот аккаунт. Потом раскомментировать `routes` в `wrangler.jsonc` и поменять `APP_URL`.
+## Хостинг
+Аккаунт Cloudflare клиента Elastica2024 (`account_id` в `wrangler.jsonc`), домены lizakovalova.com и www.lizakovalova.com — Custom Domains Worker'а.
+Деплой делает участник аккаунта (dyachektana@gmail.com, роль Administrator) через `npm run deploy`.
 
 ## Ссылки для соцсетей
-`https://liza-kovalova.dyachektana.workers.dev/p/back?utm_source=instagram&utm_campaign=stories` — сразу на программу; utm-метки попадают в metadata платежа в Stripe.
+`https://lizakovalova.com/p/back?utm_source=instagram&utm_campaign=stories` — сразу на программу; utm-метки попадают в metadata платежа в Stripe.
 
 ## Поддержка
 Покупатель потерял страницу после оплаты → по email из чека:
-`curl -X POST -H "x-admin-key: …" -d '{"email":"…"}' https://liza-kovalova.dyachektana.workers.dev/api/admin/resend`
+`curl -X POST -H "x-admin-key: …" -d '{"email":"…"}' https://lizakovalova.com/api/admin/resend`
 
 ## Перед запуском (ЕС)
 - Шрифты пока грузятся с Google Fonts (решение клиента). Для DSGVO надёжнее хранить их на сайте — оба шрифта под OFL.
