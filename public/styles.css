@@ -322,36 +322,26 @@ svg { display: block; }
   border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px;
 }
 
-/* Липкая панель покупки */
-.buybar {
-  position: fixed; left: 10px; right: 10px; bottom: calc(env(safe-area-inset-bottom) + 10px); z-index: 40;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 10px 10px 20px; border-radius: 999px;
-  background: rgba(251, 248, 244, 0.78); -webkit-backdrop-filter: blur(20px) saturate(1.5); backdrop-filter: blur(20px) saturate(1.5);
-  border: 1px solid var(--line); box-shadow: 0 18px 50px -20px rgba(28, 21, 18, 0.45);
-  animation: rise 0.8s var(--ease) 0.25s both;
-}
-.buybar small { display: block; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
-.buybar .price { font-size: 22px; }
-.buybar .btn { height: 52px; padding-left: 20px; gap: 10px; font-size: 15px; white-space: nowrap; flex: none; }
-.buybar small, .buybar .price { white-space: nowrap; }
-.buybar .btn { min-width: 0; }
 @media (max-width: 400px) {
   .buy-inline small { display: none; }
   .buy-inline { padding-left: 18px; }
   .buy-inline .btn { padding-left: 18px; gap: 8px; }
-  /* Длинная кнопка курса («Хочу эффект модели») должна влезать на узких телефонах */
-  .buybar { padding-left: 18px; }
-  .buybar small { display: none; }
-  .buybar .btn { padding-left: 18px; gap: 8px; }
 }
-.buybar .btn .ic { width: 36px; height: 36px; }
-.buybar ~ .foot { padding-bottom: calc(env(safe-area-inset-bottom) + 120px); }
-.buybar { transition: translate 0.45s var(--ease), opacity 0.45s var(--ease); }
-.buybar.away { translate: 0 160%; opacity: 0; pointer-events: none; }
-.buybar.solo { padding: 8px; }
-.buybar.solo .btn { width: 100%; justify-content: space-between; }
-@keyframes rise { from { transform: translateY(140%); opacity: 0; } }
+
+/* Закреплённая плашка курса: название и кнопка покупки под шапкой, пока кнопка под заголовком не видна */
+.p-sticky {
+  position: fixed; left: 10px; right: 10px; top: calc(env(safe-area-inset-top) + 66px); z-index: 45;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 8px 8px 16px; border-radius: 18px;
+  background: rgba(251, 248, 244, 0.86); -webkit-backdrop-filter: blur(20px) saturate(1.5); backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid var(--line); box-shadow: 0 14px 40px -22px rgba(28, 21, 18, 0.45);
+  transition: translate 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+.p-sticky.away { translate: 0 -24px; opacity: 0; pointer-events: none; }
+.ps-text { min-width: 0; display: grid; }
+.ps-text small { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-text b { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.05; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.p-sticky .btn.sm { flex: none; margin: 0; }
 
 /* ---------- Страница после оплаты ---------- */
 .done { min-height: 100svh; display: grid; place-items: center; padding: 110px var(--gutter) 40px; position: relative; isolation: isolate; }
@@ -400,10 +390,9 @@ svg { display: block; }
   .aims { grid-template-columns: 1fr 1fr; }
   .programs .card:first-child .cover { aspect-ratio: 21 / 9; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  .buybar { left: 50%; right: auto; width: min(560px, calc(100% - 40px)); transform: translateX(-50%); animation-name: rise-c; }
+  .p-sticky { left: 50%; right: auto; width: min(720px, calc(100% - 80px)); transform: translateX(-50%); }
   .hero p { font-size: 19px; }
 }
-@keyframes rise-c { from { transform: translate(-50%, 140%); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -155,9 +155,12 @@ function programView(p) {
     </section>
     ${!p.contact && inAppBrowser ? `<div class="hint" data-reveal>${esc(t.inApp)}</div>` : ""}
   </div>
-  ${p.contact
-    ? `<div class="buybar solo away">${cta}</div>`
-    : `<div class="buybar away"><div><small>${esc(t.access)}</small><span class="price">${price}</span></div>${cta}</div>`}
+  <div class="p-sticky away">
+    <div class="ps-text"><small>0${i + 1}${P.tag ? ` · ${esc(P.tag)}` : ""}</small><b>${esc(P.title)}</b></div>
+    ${p.contact
+      ? `<a class="btn sm" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(t.book)}</a>`
+      : `<button class="btn sm" data-buy="${p.id}" aria-label="${esc(t.buyShort)} ${price}">${price}</button>`}
+  </div>
   ${footer()}`;
 }
 
@@ -289,7 +292,7 @@ function draw() {
 let barIo;
 function watchBuybar() {
   barIo?.disconnect();
-  const inline = app.querySelector(".buy-inline"), bar = app.querySelector(".buybar");
+  const inline = app.querySelector(".buy-inline"), bar = app.querySelector(".p-sticky");
   if (!inline || !bar) return;
   barIo = new IntersectionObserver(([e]) => bar.classList.toggle("away", e.isIntersecting || e.boundingClientRect.top > 0));
   barIo.observe(inline);
