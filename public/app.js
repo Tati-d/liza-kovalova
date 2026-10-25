@@ -48,8 +48,11 @@ function homeView() {
     <span class="kicker" data-reveal>${esc(t.kicker)}</span>
     <h1 data-reveal data-d="1">${t.heroTitle}</h1>
     <p data-reveal data-d="2">${esc(t.heroSub)}</p>
-    <div data-reveal data-d="3"><a class="btn" href="#programs" data-scroll>${esc(t.heroCta)}<span class="ic">${ARROW}</span></a></div>
-    <div class="stats" data-reveal data-d="4">
+    <p class="push" data-reveal data-d="3">${esc(t.heroPush)}</p>
+    <p data-reveal data-d="3">${esc(t.heroText)}</p>
+    <div data-reveal data-d="4"><a class="btn" href="#programs" data-scroll>${esc(t.heroCta)}<span class="ic">${ARROW}</span></a></div>
+    <p class="note" data-reveal data-d="5">${esc(t.heroNote)}</p>
+    <div class="stats" data-reveal data-d="6">
       ${t.stats.map(([n, l]) => `<div><b>${esc(n)}</b><span>${esc(l)}</span></div>`).join("")}
     </div>
   </section>
@@ -57,8 +60,7 @@ function homeView() {
   <div class="marquee" aria-hidden="true"><div class="marquee-track">${words.map((w) => `<span>${esc(w)}</span>`).join("")}</div></div>
 
   <section class="section" id="programs">
-    <span class="eyebrow" data-reveal>${esc(t.tariff)}</span>
-    <h2 data-reveal data-d="1">${esc(t.programsTitle)}</h2>
+    <h2 data-reveal>${esc(t.programsTitle)}</h2>
     <p class="lead" data-reveal data-d="2">${esc(t.programsSub)}</p>
     <div class="programs">
       ${PROGRAMS.map((p, i) => {
@@ -67,7 +69,10 @@ function homeView() {
           <div class="cover" data-vt="cover-${p.id}">
             ${aura(p.id)}
             <span class="num">0${i + 1}</span>
-            <h3 class="cover-title" data-vt="title-${p.id}">${esc(P.title)}</h3>
+            <div class="cover-title">
+              ${P.tag ? `<span class="cover-tag">${esc(P.tag)}</span>` : ""}
+              <h3 data-vt="title-${p.id}">${esc(P.title)}</h3>
+            </div>
           </div>
           <div class="card-body">
             <div><p>${esc(P.short)}</p><span class="price">${money(p.price)}</span></div>
@@ -108,7 +113,7 @@ function programView(p) {
     ${aura(p.id)}
     <a class="back" href="/" data-link>${BACK}${esc(t.back)}</a>
     <div class="p-hero-in">
-      <span class="kicker">0${i + 1} · ${esc(t.tariff)}</span>
+      <span class="kicker">0${i + 1}${P.tag ? ` · ${esc(P.tag)}` : ""}</span>
       <h1 data-vt="title-${p.id}">${esc(P.title)}</h1>
       <p data-reveal data-d="2">${esc(P.short)}</p>
     </div>

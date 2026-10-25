@@ -133,10 +133,13 @@ svg { display: block; }
 }
 .kicker::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bronze); }
 .hero h1 {
-  font-family: var(--serif); font-weight: 400; margin: 18px 0 18px;
-  font-size: clamp(58px, 17vw, 148px); line-height: 0.9; letter-spacing: -0.025em;
+  font-family: var(--serif); font-weight: 400; margin: 18px 0 20px; max-width: 12ch;
+  font-size: clamp(48px, 13.5vw, 124px); line-height: 0.92; letter-spacing: -0.025em;
 }
-.hero p { margin: 0 0 28px; max-width: 36ch; color: var(--ink-2); font-size: 17px; }
+.hero p { margin: 0 0 14px; max-width: 38ch; color: var(--ink-2); font-size: 17px; }
+.hero p.push { font-family: var(--serif); font-style: italic; font-size: 24px; line-height: 1.15; color: var(--ink); margin: 6px 0 10px; }
+.hero .btn { margin-top: 14px; }
+.hero p.note { margin: 16px 0 0; font-size: 14px; color: var(--muted); max-width: 34ch; }
 .stats {
   display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 40px;
   border-top: 1px solid var(--line); padding-top: 18px;
@@ -181,10 +184,11 @@ svg { display: block; }
   font-family: var(--serif); font-size: 18px; padding: 6px 14px; border-radius: 999px;
   background: rgba(251, 248, 244, 0.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
-.cover-title {
-  position: absolute; left: 20px; right: 20px; bottom: 18px; z-index: 1; margin: 0;
-  font-family: var(--serif); font-weight: 400; font-size: clamp(38px, 11vw, 56px); line-height: 0.95; letter-spacing: -0.02em;
+.cover-title { position: absolute; left: 20px; right: 20px; bottom: 18px; z-index: 1; }
+.cover-title h3 {
+  margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(38px, 11vw, 56px); line-height: 0.95; letter-spacing: -0.02em;
 }
+.cover-tag { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); }
 .card-body { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 18px 20px 20px; }
 .card-body p { margin: 0 0 6px; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
 .price { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }

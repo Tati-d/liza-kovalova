@@ -39,6 +39,7 @@ export async function createCheckout(request, env) {
   if (!program) return json({ error: "unknown_program" }, 400);
   const lang = body.lang === "uk" ? "uk" : "ru";
   const T = I18N[lang];
+  const P = T.programs[program.id];
   const utm = typeof body.utm === "object" && body.utm ? body.utm : {};
   const clip = (v) => (typeof v === "string" ? v.slice(0, 100) : undefined);
   const metadata = {
@@ -58,7 +59,7 @@ export async function createCheckout(request, env) {
       price_data: {
         currency: CURRENCY,
         unit_amount: program.price,
-        product_data: { name: `${T.programs[program.id].title} — ${T.tariff}`, description: T.stripeDescription }
+        product_data: { name: [P.title, P.tag].filter(Boolean).join(" — "), description: T.stripeDescription }
       }
     }],
     allow_promotion_codes: true,
