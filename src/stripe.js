@@ -38,7 +38,7 @@ export async function createCheckout(request, env) {
   const program = findProgram(body.program);
   // Курсы без цены (персональные тренировки) не продаются через сайт
   if (!program || !program.price) return json({ error: "unknown_program" }, 400);
-  const lang = body.lang === "uk" ? "uk" : "ru";
+  const lang = body.lang === "ru" ? "ru" : "uk";
   const T = I18N[lang];
   const P = T.programs[program.id];
   const utm = typeof body.utm === "object" && body.utm ? body.utm : {};
@@ -82,7 +82,7 @@ export async function recordPaidSession(env, session) {
     `INSERT INTO orders (id, program, lang, amount, currency, email, payment_intent, status, access_until, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', ?, ?) ON CONFLICT(id) DO NOTHING`
   ).bind(
-    session.id, program.id, session.metadata?.lang === "uk" ? "uk" : "ru",
+    session.id, program.id, session.metadata?.lang === "ru" ? "ru" : "uk",
     session.amount_total, session.currency, session.customer_details?.email || null,
     typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || null,
     program.accessDays ? (session.created || now()) + program.accessDays * 86400 : null,

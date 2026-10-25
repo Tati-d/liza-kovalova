@@ -10,7 +10,7 @@ async function programPage(request, env, id) {
   const program = findProgram(id);
   const res = await env.ASSETS.fetch(new URL("/index.html", request.url));
   if (!program) return res;
-  const P = I18N.ru.programs[program.id];
+  const P = I18N.uk.programs[program.id];
   const pageTitle = `${P.title} — Liza Kovalova`;
   const set = (value) => ({ element: (el) => el.setAttribute("content", value) });
   return new HTMLRewriter()

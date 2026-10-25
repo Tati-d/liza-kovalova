@@ -10,7 +10,7 @@ const store = {
 function detectLang() {
   const saved = store.get("lang");
   if (saved === "ru" || saved === "uk") return saved;
-  return (navigator.languages || [navigator.language]).some((l) => /^uk/i.test(l)) ? "uk" : "ru";
+  return "uk"; // основной язык сайта
 }
 let lang = detectLang();
 const T = () => I18N[lang];
