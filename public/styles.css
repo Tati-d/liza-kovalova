@@ -252,6 +252,9 @@ svg { display: block; }
   font-size: clamp(56px, 16vw, 128px); line-height: 0.9; letter-spacing: -0.025em;
 }
 .p-hero p { margin: 0; color: var(--ink-2); font-size: 17px; max-width: 34ch; }
+.p-hero p + p { margin-top: 10px; }
+.intro p { margin: 0 0 14px; font-family: var(--serif); font-size: 26px; line-height: 1.2; color: var(--ink); }
+.intro p:last-child { margin-bottom: 0; }
 .back {
   position: absolute; top: calc(env(safe-area-inset-top) + 72px); left: var(--gutter); z-index: 2;
   display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px 9px 12px; border-radius: 999px;

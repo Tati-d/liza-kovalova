@@ -1,7 +1,7 @@
 import { findProgram } from "../public/programs.js";
 import { I18N } from "../public/i18n.js";
 import { createCheckout, getAccess, stripeWebhook } from "./stripe.js";
-import { telegramWebhook, setupTelegram, inviteFor } from "./telegram.js";
+import { telegramWebhook, setupTelegram, inviteFor, expireAccess } from "./telegram.js";
 import { json, safeEqual } from "./util.js";
 
 // Ссылка вида /p/back для сторис и шапки профиля: подставляем заголовок и описание программы
@@ -26,7 +26,7 @@ async function programPage(request, env, id) {
 async function resend(request, env) {
   const { email } = await request.json().catch(() => ({}));
   if (typeof email !== "string" || !email.includes("@")) return json({ error: "email_required" }, 400);
-  const { results } = await env.DB.prepare("SELECT * FROM orders WHERE lower(email) = lower(?) AND status = 'paid'").bind(email.trim()).all();
+  const { results } = await env.DB.prepare("SELECT * FROM orders WHERE lower(email) = lower(?) AND status IN ('paid', 'expired')").bind(email.trim()).all();
   const out = [];
   for (const o of results) out.push({ order: o.id, program: o.program, ...(await inviteFor(env, o)) });
   return json({ orders: out });
@@ -66,5 +66,8 @@ export default {
       console.error(e.stack || e);
       return json({ error: "server_error" }, 500);
     }
+  },
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(expireAccess(env));
   }
 };

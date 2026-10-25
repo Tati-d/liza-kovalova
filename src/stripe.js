@@ -78,12 +78,13 @@ export async function recordPaidSession(env, session) {
   const program = findProgram(session.metadata?.program);
   if (!program) throw new Error(`session ${session.id} without known program`);
   await env.DB.prepare(
-    `INSERT INTO orders (id, program, lang, amount, currency, email, payment_intent, status, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', ?) ON CONFLICT(id) DO NOTHING`
+    `INSERT INTO orders (id, program, lang, amount, currency, email, payment_intent, status, access_until, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', ?, ?) ON CONFLICT(id) DO NOTHING`
   ).bind(
     session.id, program.id, session.metadata?.lang === "uk" ? "uk" : "ru",
     session.amount_total, session.currency, session.customer_details?.email || null,
     typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || null,
+    program.accessDays ? (session.created || now()) + program.accessDays * 86400 : null,
     now()
   ).run();
   return env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(session.id).first();
@@ -108,7 +109,7 @@ export async function getAccess(request, env) {
     if (session.payment_status !== "paid") return json({ status: "pending" }, 202);
     order = await recordPaidSession(env, session);
   }
-  if (order.status !== "paid") return json({ status: "revoked" }, 403);
+  if (order.status === "revoked") return json({ status: "revoked" }, 403);
 
   return json({ program: order.program, ...(await inviteFor(env, order)) });
 }

@@ -18,6 +18,8 @@
     }
   ],
   "observability": { "enabled": true },
+  // Каждый час закрываем доступ с истёкшим сроком
+  "triggers": { "crons": ["0 * * * *"] },
   "vars": {
     "APP_URL": "https://liza-kovalova.dyachektana.workers.dev",
     // id закрытого канала (-100...) для каждой программы; одна программа = один канал,

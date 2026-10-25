@@ -107,9 +107,11 @@ function programView(p) {
       <span class="kicker">0${i + 1}${P.tag ? ` · ${esc(P.tag)}` : ""}</span>
       <h1 data-vt="title-${p.id}">${esc(P.title)}</h1>
       <p data-reveal data-d="2">${esc(P.short)}</p>
+      ${P.lead ? `<p data-reveal data-d="3">${esc(P.lead)}</p>` : ""}
     </div>
   </section>
   <div class="p-body">
+    ${P.desc ? `<section class="intro">${P.desc.map((d, k) => `<p data-reveal data-d="${k}">${esc(d)}</p>`).join("")}</section>` : ""}
     <section>
       <h3 data-reveal>${esc(P.goalsTitle || t.goalsTitle)}</h3>
       <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}">${esc(g)}</li>`).join("")}</ol>
@@ -160,6 +162,8 @@ function successView(state) {
   if (state.kind === "error") return doneCard(`<h1>${esc(t.errorTitle)}</h1><p>${esc(t.errorText)}</p>
     <a class="btn wide" href="https://www.instagram.com/liza_kovalova_/" target="_blank" rel="noopener">${esc(t.support)}<span class="ic">${ARROW}</span></a>`);
   const P = t.programs[state.program];
+  if (state.kind === "expired") return doneCard(`<h1>${esc(t.expiredTitle)}</h1><p>${esc(t.expiredText)}</p>
+    ${P ? `<a class="btn wide" href="/p/${state.program}" data-link>${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></a>` : ""}`);
   const joined = state.kind === "joined";
   return doneCard(`${CHECK}
     ${P ? `<span class="tag">${esc(P.title)}</span>` : ""}

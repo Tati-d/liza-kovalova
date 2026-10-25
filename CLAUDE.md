@@ -11,6 +11,7 @@ Cloudflare Worker (`src/`, plain JS, без сборки) + D1 (`migrations/`) +
 - `public/app.js` — роутер (`/`, `/p/:id`, `/success`), view transitions, появление при скролле. CSP запрещает inline-стили: CSS-переменные ставятся через `el.style`.
 - `src/stripe.js` — Checkout, проверка оплаты, вебхук (подпись, идемпотентность, возвраты/споры).
 - `src/telegram.js` — персональные ссылки `member_limit: 1`, вебхук `chat_member`, удаление при возврате. Бот только техадмин каналов, с покупателем не общается.
+  Срок доступа: `accessDays` в `programs.js` → `orders.access_until`; cron раз в час (`expireAccess`) убирает истёкших.
 - `src/worker.js` — маршруты, мета-теги для `/p/:id`, админ-эндпоинты `/api/admin/setup`, `/api/admin/resend`.
 - `test/e2e.mjs` — `npm test`: wrangler dev + моки Stripe/Telegram, весь путь оплаты и доступа.
 

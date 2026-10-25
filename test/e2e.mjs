@@ -19,7 +19,7 @@ const SESSION = "cs_test_a1b2c3d4e5f6g7h8";
 // ---------- Мок Stripe и Telegram ----------
 const calls = [];
 const sessions = {};
-let linkN = 0, memberStatus = "member";
+let linkN = 0, sessionN = 0, memberStatus = "member";
 const mock = http.createServer(async (req, res) => {
   let body = "";
   for await (const c of req) body += c;
@@ -27,12 +27,15 @@ const mock = http.createServer(async (req, res) => {
   if (req.url === "/v1/checkout/sessions" && req.method === "POST") {
     const f = new URLSearchParams(body);
     calls.push({ stripe: "create", form: f });
-    sessions[SESSION] = {
-      id: SESSION, payment_status: "paid", amount_total: Number(f.get("line_items[0][price_data][unit_amount]")),
-      currency: "eur", payment_intent: "pi_test_1", customer_details: { email: "buyer@example.com" },
+    const n = ++sessionN;
+    const id = n === 1 ? SESSION : `cs_test_session${n}abcdefgh`;
+    sessions[id] = {
+      id, payment_status: "paid", amount_total: Number(f.get("line_items[0][price_data][unit_amount]")),
+      currency: "eur", payment_intent: `pi_test_${n}`, customer_details: { email: `buyer${n === 1 ? "" : n}@example.com` },
+      created: Math.floor(Date.now() / 1000),
       metadata: { program: f.get("metadata[program]"), lang: f.get("metadata[lang]") }
     };
-    return send({ id: SESSION, url: "https://checkout.stripe.test/pay" });
+    return send({ id, url: "https://checkout.stripe.test/pay" });
   }
   const m = req.url.match(/^\/v1\/checkout\/sessions\/(.+)$/);
   if (m) {
@@ -90,7 +93,7 @@ const persist = mkdtempSync(join(tmpdir(), "lk-e2e-"));
 await new Promise((r) => mock.listen(MOCK_PORT, r));
 execFileSync("npx", ["wrangler", "d1", "migrations", "apply", "DB", "--local", "--persist-to", persist], { stdio: "ignore" });
 const vars = {
-  ...SECRETS, APP_URL: BASE, CHANNELS: JSON.stringify({ back: CHANNEL, hips: CHANNEL }),
+  ...SECRETS, APP_URL: BASE, CHANNELS: JSON.stringify({ back: CHANNEL, splits: CHANNEL, pilates: CHANNEL }),
   STRIPE_API: `http://localhost:${MOCK_PORT}`, TG_API: `http://localhost:${MOCK_PORT}`
 };
 const dev = spawn("npx", ["wrangler", "dev", "--port", String(PORT), "--persist-to", persist,
@@ -177,6 +180,33 @@ try {
   clear();
   await joinVia(222, "https://t.me/+LINK2");
   check("вступление по ссылке отозванного заказа → удаление", lastTg("banChatMember")?.params.user_id === 222);
+
+  // Курс с ограниченным сроком доступа (pilates — 30 дней)
+  calls.length = 0;
+  r = await post("/api/checkout", { program: "pilates" }, { origin: BASE });
+  const pf = calls.find((c) => c.stripe === "create")?.form;
+  check("цена пилатеса 14,99 € с сервера", pf?.get("line_items[0][price_data][unit_amount]") === "1499", pf && Object.fromEntries(pf));
+  const S2 = "cs_test_session2abcdefgh";
+  r = await api(`/api/access?session_id=${S2}`);
+  const inv2 = lastTg("createChatInviteLink")?.params;
+  check("курс с доступом на месяц → ссылка выдаётся", r.data.status === "ready" && !!r.data.link, r);
+  check("ссылка не живёт дольше срока доступа", inv2?.expire_date <= Math.floor(Date.now() / 1000) + 31 * 86400, inv2);
+  await joinVia(444, r.data.link);
+  execFileSync("npx", ["wrangler", "d1", "execute", "DB", "--local", "--persist-to", persist,
+    "--command", `UPDATE orders SET access_until = 1 WHERE id = '${S2}'`], { stdio: "ignore" });
+  clear();
+  r = await api(`/api/access?session_id=${S2}`);
+  check("после конца срока ссылка не выдаётся", r.data.status === "expired" && !r.data.link && !lastTg("createChatInviteLink"), r);
+  await fetch(`${BASE}/cdn-cgi/handler/scheduled?cron=0+*+*+*+*`);
+  await new Promise((res) => setTimeout(res, 1000));
+  check("cron убирает участника с истёкшим доступом", lastTg("banChatMember")?.params.user_id === 444, calls);
+  clear();
+  await fetch(`${BASE}/cdn-cgi/handler/scheduled?cron=0+*+*+*+*`);
+  await new Promise((res) => setTimeout(res, 500));
+  check("повторный cron никого не трогает", !lastTg("banChatMember"));
+  clear();
+  await joinVia(555, "https://t.me/+LINK" + linkN);
+  check("вступление по ссылке истёкшего заказа → удаление", lastTg("banChatMember")?.params.user_id === 555);
 
   // Страницы
   r = await api("/p/back");

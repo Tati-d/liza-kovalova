@@ -17,9 +17,13 @@ export async function tg(env, method, params = {}) {
   return data.result;
 }
 
+// Оплачен, не возвращён и срок доступа не истёк
+export const isActive = (order) => order.status === "paid" && !(order.access_until && order.access_until <= now());
+
 // Персональная ссылка: по ней может вступить ровно один человек.
 // В канале одновременно может быть только один участник на одну покупку.
 export async function inviteFor(env, order) {
+  if (!isActive(order)) return { status: order.status === "paid" ? "expired" : order.status };
   const chatId = channels(env)[order.program];
   if (!chatId) throw new Error(`no channel for program ${order.program}`);
   if (order.tg_user_id) {
@@ -30,7 +34,8 @@ export async function inviteFor(env, order) {
     return { status: "ready", link: order.invite_link };
   }
 
-  const expires = now() + LINK_TTL;
+  // Ссылка не должна пережить срок доступа
+  const expires = Math.min(now() + LINK_TTL, order.access_until || Infinity);
   const link = await tg(env, "createChatInviteLink", {
     chat_id: chatId,
     name: `order ${order.id.slice(-12)}`,
@@ -61,11 +66,11 @@ export async function telegramWebhook(request, env) {
   const joined = cm && ["member", "restricted"].includes(cm.new_chat_member?.status) && cm.invite_link?.invite_link;
   if (joined) {
     const order = await env.DB.prepare("SELECT * FROM orders WHERE invite_link = ?").bind(cm.invite_link.invite_link).first();
-    if (order?.status === "paid") {
+    if (order && isActive(order)) {
       await env.DB.prepare("UPDATE orders SET tg_user_id = ?, joined_at = ? WHERE id = ?")
         .bind(cm.new_chat_member.user.id, now(), order.id).run();
     } else if (order) {
-      // Вступил по ссылке уже отозванного заказа — убираем
+      // Вступил по ссылке отозванного или истёкшего заказа — убираем
       await kick(env, cm.chat.id, cm.new_chat_member.user.id);
     }
   }
@@ -78,7 +83,8 @@ async function kick(env, chatId, userId) {
   await tg(env, "unbanChatMember", { chat_id: chatId, user_id: userId, only_if_banned: true });
 }
 
-// Возврат/спор: гасим ссылку и убираем участника, если у него нет другой оплаты этого канала.
+// Возврат, спор или конец срока: гасим ссылку и убираем участника,
+// если у него нет другого действующего доступа к этому каналу.
 export async function revokeAccess(env, order) {
   const chatId = channels(env)[order.program];
   if (!chatId) return;
@@ -88,9 +94,26 @@ export async function revokeAccess(env, order) {
   if (!order.tg_user_id) return;
   const programs = Object.entries(channels(env)).filter(([, c]) => String(c) === String(chatId)).map(([p]) => p);
   const other = await env.DB.prepare(
-    `SELECT 1 FROM orders WHERE tg_user_id = ? AND status = 'paid' AND id != ? AND program IN (${programs.map(() => "?").join(",")}) LIMIT 1`
-  ).bind(order.tg_user_id, order.id, ...programs).first();
+    `SELECT 1 FROM orders WHERE tg_user_id = ? AND status = 'paid' AND (access_until IS NULL OR access_until > ?)
+     AND id != ? AND program IN (${programs.map(() => "?").join(",")}) LIMIT 1`
+  ).bind(order.tg_user_id, now(), order.id, ...programs).first();
   if (!other) await kick(env, chatId, order.tg_user_id);
+}
+
+// Cron: закрываем доступ, у которого истёк срок
+export async function expireAccess(env) {
+  const { results } = await env.DB.prepare(
+    "SELECT * FROM orders WHERE status = 'paid' AND access_until IS NOT NULL AND access_until <= ? LIMIT 200"
+  ).bind(now()).all();
+  for (const order of results) {
+    await env.DB.prepare("UPDATE orders SET status = 'expired' WHERE id = ? AND status = 'paid'").bind(order.id).run();
+    try {
+      await revokeAccess(env, order);
+    } catch (e) {
+      console.error(`expire ${order.id}: ${e.message}`);
+    }
+  }
+  return results.length;
 }
 
 // POST /api/admin/setup: подписка на обновления участников каналов
