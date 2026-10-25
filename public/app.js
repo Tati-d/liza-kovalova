@@ -35,6 +35,8 @@ const money = (cents) =>
 const ARROW = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
 const BACK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>`;
 const TG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 3.6 2.9 10.8c-1.1.4-1.1 1.9 0 2.2l4.6 1.4 1.8 5.5c.3.9 1.4 1.1 2 .5l2.6-2.5 4.8 3.5c.8.6 2 .2 2.2-.8l3.1-15.6c.2-1-.8-1.8-1.6-1.4ZM9.8 14.6l-.4 3.6-1.3-4 9.4-6.9-7.7 7.3Z"/></svg>`;
+// Пункт результата: строка или [акцентная фраза, продолжение] — акцент выделяется жирным
+const goal = (g) => (Array.isArray(g) ? `<b>${esc(g[0])}</b> — ${esc(g[1])}` : esc(g));
 const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i></i></div>`;
 
 // ---------- Страницы ----------
@@ -114,7 +116,7 @@ function programView(p) {
     ${P.desc ? `<section class="intro">${P.desc.map((d, k) => `<p data-reveal data-d="${k}">${esc(d)}</p>`).join("")}</section>` : ""}
     <section>
       <h3 data-reveal>${esc(P.goalsTitle || t.goalsTitle)}</h3>
-      <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}">${esc(g)}</li>`).join("")}</ol>
+      <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}"><span>${goal(g)}</span></li>`).join("")}</ol>
     </section>
     <section>
       <h3 data-reveal>${esc(t.includedTitle)}</h3>

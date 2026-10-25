@@ -268,6 +268,7 @@ svg { display: block; }
   display: grid; grid-template-columns: 24px 1fr; gap: 10px;
   padding: 18px 0; border-top: 1px solid var(--line); font-size: 17px; color: var(--ink-2);
 }
+.goals b { font-weight: 700; color: var(--ink); }
 .goals li::before { content: ""; width: 8px; height: 8px; margin: 10px 0 0 4px; border-radius: 50%; background: var(--bronze); }
 .trust { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; color: var(--muted); font-size: 13px; }
 .trust .pay { display: flex; gap: 6px; flex-wrap: wrap; }
