@@ -23,6 +23,14 @@ const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign"];
     try { sessionStorage.setItem("utm", JSON.stringify(Object.fromEntries(UTM_KEYS.map((k) => [k, q.get(k)])))); } catch {}
   }
 })();
+// Вариант дизайна блока курсов: 1 — большие карточки, 2 — плитки 2×2 с иконками.
+// ?design=2 в ссылке включает второй вариант (удобно отправить клиенту).
+let design = (() => {
+  const q = new URLSearchParams(location.search).get("design");
+  if (q === "1" || q === "2") { store.set("design", q); return q; }
+  return store.get("design") === "2" ? "2" : "1";
+})();
+
 const utm = () => { try { return JSON.parse(sessionStorage.getItem("utm") || "{}"); } catch { return {}; } };
 
 const inAppBrowser = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|BytedanceWebview/i.test(navigator.userAgent);
@@ -37,6 +45,16 @@ const BACK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke
 const TG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 3.6 2.9 10.8c-1.1.4-1.1 1.9 0 2.2l4.6 1.4 1.8 5.5c.3.9 1.4 1.1 2 .5l2.6-2.5 4.8 3.5c.8.6 2 .2 2.2-.8l3.1-15.6c.2-1-.8-1.8-1.6-1.4ZM9.8 14.6l-.4 3.6-1.3-4 9.4-6.9-7.7 7.3Z"/></svg>`;
 // Пункт результата: строка или [акцентная фраза, продолжение] — акцент выделяется жирным
 const goal = (g) => (Array.isArray(g) ? `<b>${esc(g[0])}</b> — ${esc(g[1])}` : esc(g));
+// Иконки курсов: линейные 24×24. spine — своя, остальные из Tabler Icons (MIT, tabler.io/icons)
+const ICON_PATHS = {
+  back: '<rect x="8.5" y="2.5" width="7" height="3" rx="1.5"/><rect x="9" y="7.5" width="7" height="3" rx="1.5"/><rect x="8.5" y="12.5" width="7" height="3" rx="1.5"/><path d="M9.5 18h5l-2.5 3.5z"/>',
+  splits: '<path d="M7 7a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M13 21l1 -9l7 -6"/><path d="M3 11h6l5 1"/><path d="M11.5 8.5l4.5 -3.5"/>',
+  pilates: '<path d="M12 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M4 20h4l1.5 -3"/><path d="M17 20l-1 -5h-5l1 -7"/><path d="M4 10l4 -1l4 -1l4 1.5l4 1.5"/>',
+  personal: '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h.5"/><path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z"/>'
+};
+const icon = (id) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[id] || ""}</svg>`;
+
 const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i></i></div>`;
 
 // ---------- Страницы ----------
@@ -60,7 +78,7 @@ function homeView() {
   <section class="section" id="programs">
     <h2 data-reveal>${esc(t.programsTitle)}</h2>
     <p class="lead" data-reveal data-d="2">${esc(t.programsSub)}</p>
-    <div class="programs">
+    ${design === "2" ? tilesView() : `<div class="programs">
       ${PROGRAMS.map((p, i) => {
         const P = t.programs[p.id];
         return `<a class="card" href="/p/${p.id}" data-link data-reveal data-d="${i % 2}">
@@ -78,7 +96,7 @@ function homeView() {
           </div>
         </a>`;
       }).join("")}
-    </div>
+    </div>`}
   </section>
 
   <section class="section two">
@@ -94,7 +112,27 @@ function homeView() {
       ${t.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}
     </div>
   </section>
+  <div class="design-switch" role="group" aria-label="Design">
+    <span>Дизайн</span>
+    <button data-design="1" class="${design === "1" ? "on" : ""}">1</button><button data-design="2" class="${design === "2" ? "on" : ""}">2</button>
+  </div>
   ${footer()}`;
+}
+
+// Вариант 2: четыре плитки 2×2 на один экран телефона
+function tilesView() {
+  const t = T();
+  return `<div class="tiles">
+    ${PROGRAMS.map((p, i) => {
+      const P = t.programs[p.id];
+      return `<a class="tile" href="/p/${p.id}" data-link data-reveal data-d="${i}" data-vt="cover-${p.id}">
+        ${aura(p.id)}
+        <span class="tile-top"><span class="tile-ic">${icon(p.id)}</span><span class="tile-num">0${i + 1}</span></span>
+        <h3 data-vt="title-${p.id}">${esc(P.title)}</h3>
+        <span class="tile-foot"><span class="price">${p.price ? money(p.price) : esc(P.priceLabel)}</span><span class="go">${ARROW}</span></span>
+      </a>`;
+    }).join("")}
+  </div>`;
 }
 
 function programView(p) {
@@ -298,6 +336,12 @@ function observeReveal() {
 document.addEventListener("click", (e) => {
   const buyBtn = e.target.closest("#buy");
   if (buyBtn) return buy(buyBtn);
+  const designBtn = e.target.closest("[data-design]");
+  if (designBtn) {
+    design = designBtn.dataset.design;
+    store.set("design", design);
+    return transition(draw);
+  }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {
     lang = langBtn.dataset.lang;
