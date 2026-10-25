@@ -45,17 +45,17 @@ const BACK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke
 const TG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 3.6 2.9 10.8c-1.1.4-1.1 1.9 0 2.2l4.6 1.4 1.8 5.5c.3.9 1.4 1.1 2 .5l2.6-2.5 4.8 3.5c.8.6 2 .2 2.2-.8l3.1-15.6c.2-1-.8-1.8-1.6-1.4ZM9.8 14.6l-.4 3.6-1.3-4 9.4-6.9-7.7 7.3Z"/></svg>`;
 // Пункт результата: строка или [акцентная фраза, продолжение] — акцент выделяется жирным
 const goal = (g) => (Array.isArray(g) ? `<b>${esc(g[0])}</b> — ${esc(g[1])}` : esc(g));
-// Иконки курсов: линейные 24×24. back (силуэт девушки с ровной спиной) — своя, остальные из Tabler Icons
+// Иконки курсов: линейные 24×24. back (модель в шляпе со спины: ровная спина, руки на талии) — своя, остальные из Tabler Icons
 // (лицензия MIT, текст лицензии — public/licenses.txt, должен оставаться на сайте)
 const ICON_PATHS = {
-  back: '<circle cx="14.6" cy="4" r="2.2"/><circle cx="11.7" cy="3.1" r="1"/><path d="M12.8 6.8v7.2c0 1 -1.4 1.6 -1.4 3l.8 5h1.4"/><path d="M16.1 6.9c2 .6 2.9 2 2.4 3.6c-.4 1.1 -1.3 1.6 -1.3 2.6c0 .9 .7 1.6 .7 2.7c0 1.3 -.9 2.2 -1.1 3.4l-.5 2.8h1.6"/>',
+  back: '<path d="M5.6 6.3c2.6 -1.9 9.6 -2.8 13.2 -.9"/><path d="M9.8 5.3c.1 -1.8 1 -2.9 2.3 -2.9s2.2 .9 2.4 2.5"/><path d="M10.9 6.1c0 1.3 .5 2.1 1.2 2.1s1.2 -.8 1.2 -2.1"/><path d="M8.2 10.2c1.2 -.8 2.5 -1 3.9 -1s2.7 .2 3.9 1"/><path d="M8.2 10.2c.2 1.8 .9 3.2 1.6 4.4c-.9 1.6 -1.6 3.6 -1.6 5.6"/><path d="M16 10.2c-.2 1.8 -.9 3.2 -1.6 4.4c.9 1.6 1.6 3.6 1.6 5.6"/><path d="M8.2 20.2c1.2 .9 2.6 1.3 3.9 1.3s2.7 -.4 3.9 -1.3"/><path d="M12.1 10.6v8.6"/><path d="M8.3 10.4l-2.5 2.8l3.9 1.4"/><path d="M15.9 10.4l2.5 2.8l-3.9 1.4"/>',
   splits: '<path d="M7 7a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M13 21l1 -9l7 -6"/><path d="M3 11h6l5 1"/><path d="M11.5 8.5l4.5 -3.5"/>',
   pilates: '<path d="M12 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M4 20h4l1.5 -3"/><path d="M17 20l-1 -5h-5l1 -7"/><path d="M4 10l4 -1l4 -1l4 1.5l4 1.5"/>',
   personal: '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h.5"/><path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z"/>'
 };
 // pathLength="1" у каждой линии — для анимации «прорисовки»
 const icon = (id) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(ICON_PATHS[id] || "").replace(/<(path|rect|circle)/g, '<$1 pathLength="1"')}</svg>`;
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(ICON_PATHS[id] || "").replace(/<(path|rect|circle)/g, '<$1 pathLength="1"')}</svg>`;
 
 const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i></i></div>`;
 
