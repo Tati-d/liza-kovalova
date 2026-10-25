@@ -1,7 +1,7 @@
 Third-party licenses / Лицензии сторонних материалов
 
 Icons "gymnastics", "yoga", "user-heart" (public/app.js, ICON_PATHS) — Tabler Icons v3.19.0, https://tabler.io/icons
-The spine icon is original work made for this project.
+The icon of a woman with a straight back (course "back") is original work made for this project.
 
 -----
 
