@@ -3,7 +3,7 @@
 export const CURRENCY = "eur";
 
 export const PROGRAMS = [
-  { id: "back",    price: 2900, aura: ["#e9c9b8", "#a8705c", "#f4e6dc"] },
+  { id: "back",    price: 999,  aura: ["#e9c9b8", "#a8705c", "#f4e6dc"] },
   { id: "hips",    price: 2900, aura: ["#ecd3b4", "#b98257", "#f6ebdd"] },
   { id: "splits",  price: 2900, aura: ["#e8c6cf", "#94505f", "#f5e4e8"] },
   { id: "legs",    price: 2900, aura: ["#ddd2c2", "#7d6450", "#efe8de"] },

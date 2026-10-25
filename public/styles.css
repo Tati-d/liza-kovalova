@@ -141,14 +141,6 @@ svg { display: block; }
 .hero p.push { font-family: var(--serif); font-style: italic; font-size: 24px; line-height: 1.15; color: var(--ink); margin: 6px 0 10px; }
 .hero .btn { margin-top: 14px; }
 .hero p.note { margin: 16px 0 0; font-size: 14px; color: var(--muted); max-width: 34ch; }
-.stats {
-  display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 40px;
-  border-top: 1px solid var(--line); padding-top: 18px;
-}
-.stats div { display: flex; flex-direction: column; gap: 2px; }
-.stats b { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1; }
-.stats span { font-size: 12px; color: var(--muted); }
-
 /* ---------- Бегущая строка ---------- */
 .marquee { overflow: hidden; border-block: 1px solid var(--line); padding: 16px 0; }
 .marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
@@ -295,6 +287,13 @@ svg { display: block; }
 .buybar .price { font-size: 22px; }
 .buybar .btn { height: 52px; padding-left: 20px; gap: 10px; font-size: 15px; white-space: nowrap; flex: none; }
 .buybar small, .buybar .price { white-space: nowrap; }
+.buybar .btn { min-width: 0; }
+@media (max-width: 400px) {
+  /* Длинная кнопка курса («Хочу эффект модели») должна влезать на узких телефонах */
+  .buybar { padding-left: 18px; }
+  .buybar small { display: none; }
+  .buybar .btn { padding-left: 18px; gap: 8px; }
+}
 .buybar .btn .ic { width: 36px; height: 36px; }
 .buybar ~ .foot { padding-bottom: calc(env(safe-area-inset-bottom) + 120px); }
 @keyframes rise { from { transform: translateY(140%); opacity: 0; } }

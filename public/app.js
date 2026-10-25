@@ -51,9 +51,6 @@ function homeView() {
     <p data-reveal data-d="3">${esc(t.heroText)}</p>
     <div data-reveal data-d="4"><a class="btn" href="#programs" data-scroll>${esc(t.heroCta)}<span class="ic">${ARROW}</span></a></div>
     <p class="note" data-reveal data-d="5">${esc(t.heroNote)}</p>
-    <div class="stats" data-reveal data-d="6">
-      ${t.stats.map(([n, l]) => `<div><b>${esc(n)}</b><span>${esc(l)}</span></div>`).join("")}
-    </div>
   </section>
 
   <div class="marquee" aria-hidden="true"><div class="marquee-track">${words.map((w) => `<span>${esc(w)}</span>`).join("")}</div></div>
@@ -89,11 +86,6 @@ function homeView() {
     <ol class="steps">${t.how.map(([b, s], i) => `<li data-reveal data-d="${i}"><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("")}</ol>
   </section>
 
-  <section class="section two">
-    <h2 data-reveal>${esc(t.includedTitle)}</h2>
-    <div class="panel" data-reveal data-d="1"><ul class="checks">${t.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
-  </section>
-
   <section class="section faq">
     <h2 data-reveal>${esc(t.faqTitle)}</h2>
     <div data-reveal data-d="1">
@@ -119,16 +111,16 @@ function programView(p) {
   </section>
   <div class="p-body">
     <section>
-      <h3 data-reveal>${esc(t.goalsTitle)}</h3>
+      <h3 data-reveal>${esc(P.goalsTitle || t.goalsTitle)}</h3>
       <ol class="goals">${P.goals.map((g, k) => `<li data-reveal data-d="${k}">${esc(g)}</li>`).join("")}</ol>
     </section>
     <section>
       <h3 data-reveal>${esc(t.includedTitle)}</h3>
-      <div class="panel" data-reveal data-d="1"><ul class="checks">${t.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
+      <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
     </section>
     <section>
       <h3 data-reveal>${esc(t.howTitle)}</h3>
-      <ol class="steps">${t.how.map(([b, s], k) => `<li data-reveal data-d="${k}"><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("")}</ol>
+      <ol class="steps">${(P.how || t.how).map(([b, s], k) => `<li data-reveal data-d="${k}"><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("")}</ol>
     </section>
     <div class="trust" data-reveal>
       <span>🔒 ${esc(t.secure)}</span>
@@ -138,7 +130,7 @@ function programView(p) {
   </div>
   <div class="buybar">
     <div><small>${esc(t.access)}</small><span class="price">${money(p.price)}</span></div>
-    <button class="btn" id="buy" data-program="${p.id}">${esc(t.buy)}<span class="ic">${ARROW}</span></button>
+    <button class="btn" id="buy" data-program="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>
   </div>
   ${footer()}`;
 }

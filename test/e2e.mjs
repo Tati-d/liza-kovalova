@@ -110,7 +110,7 @@ try {
   r = await post("/api/checkout", { program: "back", price: 1, lang: "uk", utm: { utm_source: "instagram" } }, { origin: BASE });
   check("checkout возвращает ссылку Stripe", r.data.url === "https://checkout.stripe.test/pay", r);
   const f = calls.find((c) => c.stripe === "create")?.form;
-  check("цену задаёт сервер (2900), а не клиент", f?.get("line_items[0][price_data][unit_amount]") === "2900");
+  check("цену задаёт сервер (999), а не клиент", f?.get("line_items[0][price_data][unit_amount]") === "999");
   check("utm и язык уходят в metadata", f?.get("metadata[utm_source]") === "instagram" && f?.get("metadata[lang]") === "uk");
   r = await post("/api/checkout", { program: "../../etc" }, { origin: BASE });
   check("неизвестная программа → 400", r.status === 400, r);
