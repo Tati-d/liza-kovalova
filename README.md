@@ -51,6 +51,7 @@
 `curl -X POST -H "x-admin-key: …" -d '{"email":"…"}' https://liza-kovalova.dyachektana.workers.dev/api/admin/resend`
 
 ## Перед запуском (ЕС)
+- Шрифты пока грузятся с Google Fonts (решение клиента). Для DSGVO надёжнее хранить их на сайте — оба шрифта под OFL.
 - Impressum, Datenschutz и AGB — страница Лизы в Canva (`LEGAL_URL` в `public/app.js`), ссылка в подвале. Текст документов не меняем.
 - Для цифрового контента — согласие покупателя на немедленное исполнение и отказ от права отзыва (можно включить в Stripe Checkout через `consent_collection` / `custom_text`).
 - Тексты и цены — от клиента: «Эффект модели» 9,99 €, шпагат 9,99 €, пилатес 14,99 €. Украинский перевод проверить.
