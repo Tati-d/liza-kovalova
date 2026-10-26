@@ -71,7 +71,7 @@ function homeView() {
     <div class="minis">
       ${PROGRAMS.map((p, i) => {
         const P = t.programs[p.id];
-        return `<article class="mini" data-reveal data-d="${i}">
+        return `<article class="mini" data-href="/p/${p.id}" data-reveal data-d="${i}">
           <a class="mini-art" href="/p/${p.id}" data-link data-vt="cover-${p.id}" aria-label="${esc(P.title)}">
             ${aura(p.id)}<span class="num">0${i + 1}</span>
           </a>
@@ -342,6 +342,10 @@ document.addEventListener("click", (e) => {
     e.preventDefault();
     navigate(link.getAttribute("href"));
   }
+  // Вся карточка курса кликабельна. Клик по кнопке или ссылке внутри неё обрабатывает только сама кнопка
+  // (покупка, WhatsApp) — переход на страницу курса не вызывается.
+  const card = e.target.closest(".mini[data-href]");
+  if (card && !e.target.closest("a, button") && !getSelection().toString()) navigate(card.dataset.href);
 });
 window.addEventListener("popstate", () => transition(draw));
 
