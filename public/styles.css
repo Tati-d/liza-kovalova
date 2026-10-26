@@ -237,12 +237,12 @@ svg { display: block; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
   content: "+"; flex: none; font-family: var(--sans); font-weight: 300; font-size: 28px; line-height: 1;
-  transition: transform 0.4s var(--ease);
+  transition: transform 0.28s var(--ease);
 }
 .faq details[open] summary::after { transform: rotate(45deg); }
-.faq details::details-content { height: 0; overflow: clip; transition: height 0.5s var(--ease), content-visibility 0.5s allow-discrete; }
+.faq details::details-content { height: 0; overflow: clip; transition: height 0.28s var(--ease), content-visibility 0.28s allow-discrete; }
 .faq details[open]::details-content { height: auto; }
-.faq p { margin: 0 0 22px; color: var(--ink-2); max-width: 60ch; }
+.faq p { margin: 0; padding-bottom: 22px; color: var(--ink-2); max-width: 60ch; }
 
 /* ---------- Подвал ---------- */
 .foot { padding: 56px var(--gutter) calc(env(safe-area-inset-bottom) + 40px); border-top: 1px solid var(--line); max-width: 1180px; margin: 0 auto; }
