@@ -141,13 +141,13 @@ svg { display: block; }
 }
 /* Фото Лизы: на телефоне во всю ширину под прозрачной шапкой, снизу растворяется в фоне */
 .hero.has-photo { padding-top: 0; }
-.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); height: min(58svh, 470px); overflow: hidden; background: #d9d6d2; }
+.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); aspect-ratio: 4 / 4.9; max-height: 82svh; overflow: hidden; background: #d9d6d2; }
 .hero-photo img {
   display: block; width: calc(100% + 28px); height: 100%; margin-left: -28px;
-  object-fit: cover; object-position: 50% 6%; animation: hero-in 1.4s var(--ease) both;
+  object-fit: cover; object-position: 50% 0; animation: hero-in 1.4s var(--ease) both;
 }
-.hero-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(244, 239, 232, 0) 70%, rgba(244, 239, 232, 0.7) 90%, var(--ivory) 100%); }
-.hero-text { margin-top: -56px; }
+.hero-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(244, 239, 232, 0) 90%, var(--ivory) 100%); }
+.hero-text { margin-top: 2px; }
 .hero-text > p { position: relative; z-index: 1; }
 .hero.has-photo h1 {
   position: absolute; z-index: 2; top: calc(env(safe-area-inset-top) + 82px); right: var(--gutter);
