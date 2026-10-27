@@ -125,7 +125,7 @@ function programView(p) {
   const cta = p.contact
     ? `<a class="btn" href="${esc(contactUrl(p, P))}" target="_blank" rel="noopener">${esc(P.cta)}<span class="ic">${ARROW}</span></a>`
     : `<button class="btn" data-buy="${p.id}">${esc(P.cta || t.buy)}<span class="ic">${ARROW}</span></button>`;
-  const price = p.price ? money(p.price) : esc(P.priceLabel);
+  const price = money(p.price || p.listPrice);
   return `
   <section class="p-hero" data-vt="cover-${p.id}">
     ${aura(p.id)}
@@ -138,7 +138,7 @@ function programView(p) {
   </section>
   <div class="p-body">
     ${p.contact
-      ? `<div class="buy-inline solo" data-reveal>${cta}</div>`
+      ? `<div class="buy-inline with-note" data-reveal><div><small>${esc(P.priceNote)}</small><span class="price">${price}</span></div>${cta}</div>`
       : `<div class="buy-inline" data-reveal><div><small>${esc(t.access)}</small><span class="price">${price}</span></div>${cta}</div>`}
     ${mediaBlock(p)}
     ${p.contact ? "" : `<section>

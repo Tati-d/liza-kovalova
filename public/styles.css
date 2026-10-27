@@ -141,7 +141,7 @@ svg { display: block; }
 }
 /* Фото Лизы: на телефоне во всю ширину под прозрачной шапкой, снизу растворяется в фоне */
 .hero.has-photo { padding-top: 0; }
-.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); aspect-ratio: 4 / 4.9; max-height: 82svh; overflow: hidden; background: #d9d6d2; }
+.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); aspect-ratio: 4 / 4.5; max-height: 76svh; overflow: hidden; background: #d9d6d2; }
 .hero-photo img {
   display: block; width: calc(100% + 28px); height: 100%; margin-left: -28px;
   object-fit: cover; object-position: 50% 0; animation: hero-in 1.4s var(--ease) both;
@@ -324,6 +324,10 @@ svg { display: block; }
 .buy-inline .btn { height: 52px; padding-left: 20px; gap: 10px; font-size: 15px; white-space: nowrap; }
 .buy-inline .btn .ic { width: 36px; height: 36px; }
 .buy-inline.solo { padding: 8px; }
+.buy-inline.with-note small { display: block; letter-spacing: 0.02em; font-size: 10px; }
+.buy-inline.with-note { padding-left: 16px; gap: 8px; }
+.buy-inline.with-note .btn { padding-left: 16px; gap: 8px; font-size: 14px; min-width: 0; }
+.buy-inline.with-note .btn .ic { width: 32px; height: 32px; }
 .buy-inline.solo .btn { width: 100%; justify-content: space-between; }
 .intro p { margin: 0 0 14px; font-family: var(--serif); font-size: 26px; line-height: 1.2; color: var(--ink); }
 .intro p:last-child { margin-bottom: 0; }
