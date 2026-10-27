@@ -153,7 +153,7 @@ svg { display: block; }
 .hero-text { margin-top: -18px; }
 .hero-text > p { position: relative; z-index: 1; }
 .hero.has-photo h1 {
-  position: absolute; z-index: 2; top: calc(env(safe-area-inset-top) + 74px); right: var(--gutter);
+  position: absolute; z-index: 2; top: calc(env(safe-area-inset-top) + 60px); right: var(--gutter);
   width: 72%; max-width: none; margin: 0; text-align: right; white-space: nowrap;
   font-size: min(30px, 6.7vw); line-height: 1.05; letter-spacing: -0.02em;
 }
