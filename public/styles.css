@@ -140,21 +140,20 @@ svg { display: block; }
   padding: calc(env(safe-area-inset-top) + 74px) var(--gutter) 14px; isolation: isolate;
 }
 /* Фото Лизы: на телефоне во всю ширину под прозрачной шапкой, снизу растворяется в фоне */
-.hero.has-photo { padding-top: 0; }
-.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); aspect-ratio: 4 / 4.5; max-height: 76svh; overflow: hidden; }
+/* Фото Лизы на телефоне: начинается сразу под шапкой, сверху срезан пустой серый фон,
+   снизу показано целиком (до пояса) — растворяется только узкая полоска у краёв */
+.hero.has-photo { padding-top: calc(env(safe-area-inset-top) + 58px); }
+.hero-photo { position: relative; margin: 0 calc(-1 * var(--gutter)); overflow: hidden; }
 .hero-photo img {
-  display: block; width: calc(100% + 28px); height: 100%; margin-left: -28px;
-  object-fit: cover; object-position: 50% 0; animation: hero-in 1.4s var(--ease) both;
-}
-/* Мягкий переход фото в фон страницы: маска с плавными ступенями, без заметной границы */
-.hero-photo img {
-  -webkit-mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.85) 72%, rgba(0, 0, 0, 0.55) 82%, rgba(0, 0, 0, 0.22) 91%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 62%, rgba(0, 0, 0, 0.85) 72%, rgba(0, 0, 0, 0.55) 82%, rgba(0, 0, 0, 0.22) 91%, transparent 100%);
+  display: block; width: calc(100% + 28px); height: auto; margin: -12% 0 0 -28px;
+  animation: hero-in 1.4s var(--ease) both;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0, #000 2.5%, #000 86%, rgba(0, 0, 0, 0.5) 94%, transparent 100%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0, #000 2.5%, #000 86%, rgba(0, 0, 0, 0.5) 94%, transparent 100%);
 }
 .hero-text { margin-top: -18px; }
 .hero-text > p { position: relative; z-index: 1; }
 .hero.has-photo h1 {
-  position: absolute; z-index: 2; top: calc(env(safe-area-inset-top) + 82px); right: var(--gutter);
+  position: absolute; z-index: 2; top: calc(env(safe-area-inset-top) + 74px); right: var(--gutter);
   width: 72%; max-width: none; margin: 0; text-align: right; white-space: nowrap;
   font-size: min(30px, 6.7vw); line-height: 1.05; letter-spacing: -0.02em;
 }
@@ -432,8 +431,7 @@ svg { display: block; }
     max-width: 1180px; margin: 0 auto; padding-top: calc(env(safe-area-inset-top) + 96px);
   }
   .hero-photo { order: 2; margin: 0; height: auto; aspect-ratio: 4 / 5; border-radius: 28px; }
-  .hero-photo img { width: 100%; margin-left: 0; }
-  .hero-photo img { -webkit-mask-image: none; mask-image: none; }
+  .hero-photo img { width: 100%; height: 100%; margin: 0; object-fit: cover; -webkit-mask-image: none; mask-image: none; }
   .hero-text { margin-top: 0; }
   .hero.has-photo h1 { position: static; width: auto; max-width: none; margin: 0 0 14px; text-align: left; font-size: clamp(34px, 6vw, 84px); line-height: 0.98; }
   .hero.has-photo h1 em { font-size: 1em; }
