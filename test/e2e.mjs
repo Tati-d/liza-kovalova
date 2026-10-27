@@ -19,7 +19,7 @@ const SESSION = "cs_test_a1b2c3d4e5f6g7h8";
 // ---------- Мок Stripe и Telegram ----------
 const calls = [];
 const sessions = {};
-let linkN = 0, sessionN = 0, memberStatus = "member";
+let linkN = 0, sessionN = 0, memberStatus = "member", foreignWebhook = "https://booking.example/hook";
 const mock = http.createServer(async (req, res) => {
   let body = "";
   for await (const c of req) body += c;
@@ -50,7 +50,10 @@ const mock = http.createServer(async (req, res) => {
     if (t[2] === "createChatInviteLink") return send({ ok: true, result: { invite_link: `https://t.me/+LINK${++linkN}` } });
     if (t[2] === "getChatMember") {
       const status = params.user_id === 999 ? "administrator" : memberStatus;
-      return send({ ok: true, result: { status, can_invite_users: true } });
+      return send({ ok: true, result: { status, can_invite_users: true, can_restrict_members: true } });
+    }
+    if (t[2] === "getWebhookInfo") {
+      return send({ ok: true, result: { url: foreignWebhook } });
     }
     return send({ ok: true, result: true });
   }
@@ -123,6 +126,9 @@ try {
   // Настройка Telegram
   r = await post("/api/admin/setup", {}, { "x-admin-key": "wrong" });
   check("setup с неверным ключом → 403", r.status === 403, r);
+  r = await post("/api/admin/setup", {}, { "x-admin-key": SECRETS.ADMIN_KEY });
+  check("чужой вебхук бота (бронирование) не перезаписывается", r.data.error === "webhook_in_use" && !lastTg("setWebhook"), r);
+  foreignWebhook = "";
   r = await post("/api/admin/setup", {}, { "x-admin-key": SECRETS.ADMIN_KEY });
   check("setup проверяет права в канале", r.data.channels?.back === "ok", r);
   const hook = lastTg("setWebhook")?.params;

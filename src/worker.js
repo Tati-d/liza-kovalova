@@ -52,7 +52,7 @@ async function route(request, env) {
     if (!env.ADMIN_KEY || !safeEqual(request.headers.get("x-admin-key") || "", env.ADMIN_KEY)) {
       return json({ error: "forbidden" }, 403);
     }
-    if (pathname === "/api/admin/setup" && method === "POST") return json(await setupTelegram(env));
+    if (pathname === "/api/admin/setup" && method === "POST") return json(await setupTelegram(env, url.searchParams.get("force") === "1"));
     if (pathname === "/api/admin/resend" && method === "POST") return resend(request, env);
   }
   const m = pathname.match(/^\/p\/([a-z]+)\/?$/);

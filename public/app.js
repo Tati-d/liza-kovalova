@@ -60,11 +60,13 @@ const aura = (id) => `<div class="aura" data-aura="${id || ""}"><i></i><i></i><i
 function homeView() {
   const t = T();
   return `
-  <section class="hero">
-    ${aura()}
-    <h1 data-reveal data-d="1">${t.heroTitle}</h1>
-    <p class="push" data-reveal data-d="2">${esc(t.heroPush)}</p>
-    <p class="text" data-reveal data-d="3">${esc(t.heroText)}</p>
+  <section class="hero has-photo">
+    <figure class="hero-photo"><img src="/media/hero.jpg" alt="Liza Kovalova" width="1024" height="1280" fetchpriority="high" decoding="async"></figure>
+    <div class="hero-text">
+      <h1 data-reveal data-d="1">${t.heroTitle}</h1>
+      <p class="push" data-reveal data-d="2">${esc(t.heroPush)}</p>
+      <p class="text" data-reveal data-d="3">${esc(t.heroText)}</p>
+    </div>
   </section>
 
   <section class="section" id="programs">

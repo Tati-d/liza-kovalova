@@ -119,8 +119,16 @@ export async function expireAccess(env) {
 }
 
 // POST /api/admin/setup: подписка на обновления участников каналов
-export async function setupTelegram(env) {
+// force: перезаписать вебхук, даже если бот уже отправляет обновления в другую систему
+export async function setupTelegram(env, force = false) {
   const me = await tg(env, "getMe");
+  const ours = `${env.APP_URL}/tg/webhook`;
+  // У бота может быть только один вебхук. Если он уже занят другой системой (например, бронированием),
+  // не трогаем его — иначе та система перестанет получать сообщения.
+  const info = await tg(env, "getWebhookInfo");
+  if (info?.url && info.url !== ours && !force) {
+    return { bot: me.username, error: "webhook_in_use", current_webhook: info.url };
+  }
   await tg(env, "setWebhook", {
     url: `${env.APP_URL}/tg/webhook`,
     secret_token: env.TG_WEBHOOK_SECRET,
@@ -131,7 +139,8 @@ export async function setupTelegram(env) {
   for (const [program, chatId] of Object.entries(channels(env))) {
     try {
       const member = await tg(env, "getChatMember", { chat_id: chatId, user_id: me.id });
-      report.channels[program] = member.status === "administrator" && member.can_invite_users ? "ok" : "bot is not admin with invite rights";
+      const ok = member.status === "administrator" && member.can_invite_users && member.can_restrict_members;
+      report.channels[program] = ok ? "ok" : "bot must be admin with 'invite users' and 'ban users' rights";
     } catch (e) {
       report.channels[program] = e.message;
     }
