@@ -75,7 +75,7 @@ function homeView() {
         const P = t.programs[p.id];
         return `<article class="mini" data-href="/p/${p.id}" data-reveal data-d="${i}">
           <a class="mini-art" href="/p/${p.id}" data-link data-vt="cover-${p.id}" aria-label="${esc(P.title)}">
-            ${aura(p.id)}<span class="num">0${i + 1}</span>
+            ${p.photo ? `<img src="${esc(p.photo.src)}" alt="" loading="lazy" decoding="async" data-pos="${esc(p.photo.pos)}">` : aura(p.id)}<span class="num">0${i + 1}</span>
           </a>
           <div class="mini-body">
             <a class="mini-title" href="/p/${p.id}" data-link><h3 data-vt="title-${p.id}">${esc(P.title)}</h3></a>
@@ -112,9 +112,11 @@ function mediaBlock(p) {
   const t = T();
   const m = p.media;
   if (m?.type === "video") {
-    return `<figure class="media"><video src="${esc(m.src)}" ${m.poster ? `poster="${esc(m.poster)}"` : ""} autoplay muted loop playsinline preload="metadata"></video></figure>`;
+    // Видео с голосом — по нажатию, со звуком и кнопками; без голоса — само, беззвучно и по кругу
+    const play = m.sound ? `controls preload="metadata"` : `autoplay muted loop preload="metadata"`;
+    return `<figure class="media"><video src="${esc(m.src)}" ${m.poster ? `poster="${esc(m.poster)}"` : ""} ${play} playsinline></video></figure>`;
   }
-  if (m?.type === "image") return `<figure class="media"><img src="${esc(m.src)}" alt="" loading="lazy"></figure>`;
+  if (m?.type === "image") return `<figure class="media"><img src="${esc(m.src)}" alt="" decoding="async"></figure>`;
   return `<figure class="media" data-reveal>${aura(p.id)}<span class="play">${PLAY}</span><figcaption>${esc(t.mediaSoon)}</figcaption></figure>`;
 }
 
@@ -291,6 +293,7 @@ function draw() {
     if (p) p.aura.forEach((c, k) => el.style.setProperty(`--a${k + 1}`, c));
   });
   app.querySelectorAll("[data-d]").forEach((el) => el.style.setProperty("--d", el.dataset.d));
+  app.querySelectorAll("img[data-pos]").forEach((el) => (el.style.objectPosition = el.dataset.pos));
   app.querySelectorAll("[data-vt]").forEach((el) => (el.style.viewTransitionName = el.dataset.vt));
   observeReveal();
   watchBuybar();

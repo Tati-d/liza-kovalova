@@ -219,7 +219,7 @@ try {
 
   // Страницы
   r = await api("/p/back");
-  check("/p/back отдаёт превью с названием программы", typeof r.data === "string" && r.data.includes("<title>Эффект модели — Liza Kovalova</title>"));
+  check("/p/back отдаёт превью с названием программы", typeof r.data === "string" && r.data.includes("<title>Эффект модели (Осанка&amp;спина) — Liza Kovalova</title>"));
   r = await api("/success");
   check("/success отдаёт приложение", typeof r.data === "string" && r.data.includes('id="app"'));
   const h = await fetch(BASE + "/");
