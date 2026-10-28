@@ -1,7 +1,7 @@
 import { CURRENCY, findProgram } from "../public/programs.js";
 import { I18N } from "../public/i18n.js";
 import { now, hmac, toHex, safeEqual, json } from "./util.js";
-import { inviteFor, revokeAccess } from "./telegram.js";
+import { inviteFor, revokeAccess, notifyAdmins } from "./telegram.js";
 
 const SIGNATURE_TOLERANCE = 300; // секунд
 
@@ -78,7 +78,7 @@ export async function recordPaidSession(env, session) {
   if (session.payment_status !== "paid") return null;
   const program = findProgram(session.metadata?.program);
   if (!program) throw new Error(`session ${session.id} without known program`);
-  await env.DB.prepare(
+  const res = await env.DB.prepare(
     `INSERT INTO orders (id, program, lang, amount, currency, email, payment_intent, status, access_until, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', ?, ?) ON CONFLICT(id) DO NOTHING`
   ).bind(
@@ -88,7 +88,14 @@ export async function recordPaidSession(env, session) {
     program.accessDays ? (session.created || now()) + program.accessDays * 86400 : null,
     now()
   ).run();
-  return env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(session.id).first();
+  const order = await env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(session.id).first();
+  // Уведомляем один раз — когда заказ только что записан (вебхук и страница успеха могут прийти оба)
+  if (res.meta.changes) {
+    const amount = `${(order.amount / 100).toFixed(2).replace(".", ",")} ${String(order.currency).toUpperCase()}`;
+    const test = String(order.id).startsWith("cs_test_") ? " · ТЕСТ" : "";
+    await notifyAdmins(env, `💳 Новая оплата${test}\nКурс: ${I18N.ru.programs[order.program].title}\nСумма: ${amount}\nEmail: ${order.email || "—"}`);
+  }
+  return order;
 }
 
 // GET /api/access?session_id=cs_... → персональная ссылка в канал для оплатившего.
@@ -166,4 +173,6 @@ async function revokeByPaymentIntent(env, paymentIntent) {
   if (!order || order.status === "revoked") return;
   await env.DB.prepare("UPDATE orders SET status = 'revoked' WHERE id = ?").bind(order.id).run();
   await revokeAccess(env, order);
+  const test = String(order.id).startsWith("cs_test_") ? " · ТЕСТ" : "";
+  await notifyAdmins(env, `↩️ Возврат или спор по оплате${test}\nКурс: ${I18N.ru.programs[order.program].title}\nEmail: ${order.email || "—"}${order.tg_username ? `\n@${order.tg_username}` : ""}\nДоступ закрыт${order.tg_user_id ? ", участник удалён из группы" : ""}`);
 }

@@ -96,7 +96,7 @@ const persist = mkdtempSync(join(tmpdir(), "lk-e2e-"));
 await new Promise((r) => mock.listen(MOCK_PORT, r));
 execFileSync("npx", ["wrangler", "d1", "migrations", "apply", "DB", "--local", "--persist-to", persist], { stdio: "ignore" });
 const vars = {
-  ...SECRETS, APP_URL: BASE, CHANNELS: JSON.stringify({ back: CHANNEL, splits: CHANNEL, pilates: CHANNEL }),
+  ...SECRETS, APP_URL: BASE, ADMIN_CHAT_IDS: "900, 901", CHANNELS: JSON.stringify({ back: CHANNEL, splits: CHANNEL, pilates: CHANNEL }),
   STRIPE_API: `http://localhost:${MOCK_PORT}`, TG_API: `http://localhost:${MOCK_PORT}`
 };
 const dev = spawn("npx", ["wrangler", "dev", "--port", String(PORT), "--persist-to", persist,
@@ -157,13 +157,18 @@ try {
   check("вебхук со старой подписью (replay) → 400", r.status === 400, r);
   r = await webhook(ev);
   check("вебхук с верной подписью → ok", r.status === 200 && r.data.ok, r);
+  const paidMsgs = calls.filter((c) => c.tg === "sendMessage" && /Новая оплата/.test(c.params.text));
+  check("Лизе и админу пришло «Новая оплата» (по одному разу)", paidMsgs.length === 2 && paidMsgs.map((c) => c.params.chat_id).sort().join() === "900,901" && /ТЕСТ/.test(paidMsgs[0].params.text), paidMsgs.map((c) => c.params));
   r = await webhook(ev);
   check("повтор того же события игнорируется", r.data.duplicate === true, r);
 
   // Вступление в канал
   r = await tgHook({ chat_member: {} }, "wrong");
   check("вебхук Telegram без секрета → 403", r.status === 403, r);
+  clear();
   await joinVia(111, link);
+  const joinMsg = lastTg("sendMessage")?.params;
+  check("пришло «Вступила в группу» с @username", /Вступила в группу/.test(joinMsg?.text || "") && /@user111/.test(joinMsg.text), joinMsg);
   clear();
   r = await api(`/api/access?session_id=${SESSION}`);
   check("после вступления новая ссылка не выдаётся", r.data.status === "joined" && !r.data.link && !lastTg("createChatInviteLink"), r);
@@ -183,6 +188,7 @@ try {
   // Возврат платежа
   clear();
   r = await webhook({ id: "evt_2", type: "charge.refunded", data: { object: { refunded: true, payment_intent: "pi_test_1" } } });
+  check("пришло «Возврат или спор»", calls.some((c) => c.tg === "sendMessage" && /Возврат или спор/.test(c.params.text)));
   check("возврат: ссылка погашена, участник удалён", lastTg("revokeChatInviteLink") && lastTg("banChatMember")?.params.user_id === 111 && lastTg("unbanChatMember"), calls);
   r = await api(`/api/access?session_id=${SESSION}`);
   check("после возврата доступ закрыт", r.status === 403, r);

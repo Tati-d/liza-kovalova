@@ -1,6 +1,18 @@
 // Работа с закрытыми каналами через Telegram Bot API. Бот только технический админ канала:
 // покупатель с ним не общается, он лишь создаёт персональные ссылки и убирает участников при возврате.
 import { now, safeEqual, json } from "./util.js";
+import { I18N } from "../public/i18n.js";
+
+// Уведомления Лизе и администратору в личку бота (они должны были хоть раз написать боту).
+// ADMIN_CHAT_IDS — Telegram ID через запятую. Ошибка отправки не ломает оплату и доступ.
+export async function notifyAdmins(env, text) {
+  const ids = String(env.ADMIN_CHAT_IDS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  await Promise.all(ids.map((id) => tg(env, "sendMessage", { chat_id: id, text, disable_web_page_preview: true })
+    .catch((e) => console.error(`notify ${id}: ${e.message}`))));
+}
+
+const courseTitle = (program) => I18N.ru.programs[program]?.title || program;
+const testMark = (order) => (String(order.id).startsWith("cs_test_") ? " · ТЕСТ" : "");
 
 const LINK_TTL = 7 * 24 * 3600; // неиспользованная ссылка живёт 7 дней, потом выдаётся новая
 
@@ -71,6 +83,8 @@ export async function telegramWebhook(request, env) {
       const name = [u.first_name, u.last_name].filter(Boolean).join(" ").slice(0, 128) || null;
       await env.DB.prepare("UPDATE orders SET tg_user_id = ?, tg_username = ?, tg_name = ?, joined_at = ? WHERE id = ?")
         .bind(u.id, u.username ? String(u.username).slice(0, 64) : null, name, now(), order.id).run();
+      const who = [u.username ? `@${u.username}` : null, name, `ID ${u.id}`].filter(Boolean).join(" · ");
+      await notifyAdmins(env, `✅ Вступила в группу${testMark(order)}\nКурс: ${courseTitle(order.program)}\n${who}\nEmail: ${order.email || "—"}`);
     } else if (order) {
       // Вступил по ссылке отозванного или истёкшего заказа — убираем
       await kick(env, cm.chat.id, cm.new_chat_member.user.id);
@@ -111,6 +125,7 @@ export async function expireAccess(env) {
     await env.DB.prepare("UPDATE orders SET status = 'expired' WHERE id = ? AND status = 'paid'").bind(order.id).run();
     try {
       await revokeAccess(env, order);
+      await notifyAdmins(env, `⌛ Закончился месяц доступа${testMark(order)}\nКурс: ${courseTitle(order.program)}\nEmail: ${order.email || "—"}${order.tg_username ? `\n@${order.tg_username}` : ""}`);
     } catch (e) {
       console.error(`expire ${order.id}: ${e.message}`);
     }
