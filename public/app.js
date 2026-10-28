@@ -116,7 +116,7 @@ function mediaBlock(p) {
     const play = m.sound ? `controls preload="metadata"` : `autoplay muted loop preload="metadata"`;
     return `<figure class="media"><video src="${esc(m.src)}" ${m.poster ? `poster="${esc(m.poster)}"` : ""} ${play} playsinline></video></figure>`;
   }
-  if (m?.type === "image") return `<figure class="media"><img src="${esc(m.src)}" alt="" decoding="async"></figure>`;
+  if (m?.type === "image") return `<figure class="media${m.tall ? " tall" : ""}"><img src="${esc(m.src)}" alt="" decoding="async"></figure>`;
   return `<figure class="media" data-reveal>${aura(p.id)}<span class="play">${PLAY}</span><figcaption>${esc(t.mediaSoon)}</figcaption></figure>`;
 }
 
