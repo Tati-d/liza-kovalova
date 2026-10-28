@@ -1,7 +1,7 @@
 import { findProgram } from "../public/programs.js";
 import { I18N } from "../public/i18n.js";
 import { createCheckout, getAccess, stripeWebhook } from "./stripe.js";
-import { telegramWebhook, setupTelegram, inviteFor, expireAccess } from "./telegram.js";
+import { telegramWebhook, setupTelegram, inviteFor, expireAccess, notifyAdmins } from "./telegram.js";
 import { json, safeEqual } from "./util.js";
 
 // Ссылка вида /p/back для сторис и шапки профиля: подставляем заголовок и описание программы
@@ -54,6 +54,7 @@ async function route(request, env) {
     }
     if (pathname === "/api/admin/setup" && method === "POST") return json(await setupTelegram(env, url.searchParams.get("force") === "1"));
     if (pathname === "/api/admin/resend" && method === "POST") return resend(request, env);
+    if (pathname === "/api/admin/ping" && method === "POST") return json(await notifyAdmins(env, "🔔 Проверка: уведомления о покупках приходят сюда"));
   }
   const m = pathname.match(/^\/p\/([a-z]+)\/?$/);
   if (m && method === "GET") return programPage(request, env, m[1]);

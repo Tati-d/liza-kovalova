@@ -7,8 +7,11 @@ import { I18N } from "../public/i18n.js";
 // ADMIN_CHAT_IDS — Telegram ID через запятую. Ошибка отправки не ломает оплату и доступ.
 export async function notifyAdmins(env, text) {
   const ids = String(env.ADMIN_CHAT_IDS || "").split(",").map((s) => s.trim()).filter(Boolean);
-  await Promise.all(ids.map((id) => tg(env, "sendMessage", { chat_id: id, text, disable_web_page_preview: true })
-    .catch((e) => console.error(`notify ${id}: ${e.message}`))));
+  // Возвращает { chat_id: "ok" | текст ошибки } — чтобы проверить, кому уведомления доходят
+  const results = await Promise.all(ids.map((id) => tg(env, "sendMessage", { chat_id: id, text, disable_web_page_preview: true })
+    .then(() => [id, "ok"])
+    .catch((e) => { console.error(`notify ${id}: ${e.message}`); return [id, e.message]; })));
+  return Object.fromEntries(results);
 }
 
 const courseTitle = (program) => I18N.ru.programs[program]?.title || program;
