@@ -281,11 +281,13 @@ function currentView() {
   return { html: homeView(), title: "Liza Kovalova" };
 }
 
-function draw() {
+// scrollTop: куда прокрутить новую страницу — до того, как решать, какие блоки видны сразу
+function draw(scrollTop) {
   const { html, title } = currentView();
   document.documentElement.lang = lang;
   document.title = title;
   app.innerHTML = html;
+  if (scrollTop !== undefined) window.scrollTo({ top: scrollTop, behavior: "instant" });
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.lang === lang));
   // Стили задаём через CSSOM: CSP запрещает inline-атрибуты style
   app.querySelectorAll("[data-aura]").forEach((el) => {
@@ -322,11 +324,8 @@ const seenPages = new Set();
 const scrollPos = {};
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-function goTo(path, update) {
-  transition(() => {
-    update();
-    window.scrollTo({ top: path === "/" ? scrollPos["/"] || 0 : 0, behavior: "instant" });
-  });
+function goTo(path) {
+  transition(() => draw(path === "/" ? scrollPos["/"] || 0 : 0));
 }
 
 function navigate(href) {
@@ -336,7 +335,7 @@ function navigate(href) {
   history.pushState(null, "", url.pathname + url.search + url.hash);
   if (url.pathname === "/success") { successState = { kind: "loading" }; loadAccess(); }
   if (samePage) return transition(draw);
-  goTo(url.pathname, draw);
+  goTo(url.pathname);
 }
 
 let io;
@@ -345,13 +344,16 @@ function observeReveal() {
   io = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
   }, { rootMargin: "0px 0px -8% 0px" });
-  // То, что видно сразу при открытии, показываем мгновенно — без проявления и рывка в первый момент
+  // То, что видно сразу при открытии, показываем мгновенно — без проявления и рывка в первый момент.
+  // На это мгновение отключаем переходы: иначе браузер успевает «запомнить» блок скрытым и анимирует его
+  app.classList.add("no-anim");
   const fold = innerHeight;
   app.querySelectorAll("[data-reveal]").forEach((el) => {
     if (el.classList.contains("in")) return;
     if (el.getBoundingClientRect().top < fold) el.classList.add("in");
     else io.observe(el);
   });
+  requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove("no-anim")));
 }
 
 document.addEventListener("click", (e) => {
@@ -376,7 +378,7 @@ document.addEventListener("click", (e) => {
 let currentPath = location.pathname;
 window.addEventListener("popstate", () => {
   scrollPos[currentPath] = scrollY;
-  goTo(location.pathname, draw);
+  goTo(location.pathname);
 });
 
 const bar = document.getElementById("bar");

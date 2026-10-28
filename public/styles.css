@@ -76,6 +76,7 @@ em { font-style: italic; color: var(--red); }
   transition-delay: calc(var(--d, 0) * 60ms);
 }
 [data-reveal].in { opacity: 1; transform: none; }
+.no-anim [data-reveal] { transition: none !important; }
 
 /* ---------- Кнопки ---------- */
 /* Глянцевая кнопка как на e-lastica.de: блик сверху, объёмный градиент, внутренние тени и бегущий отблеск */
@@ -97,11 +98,11 @@ em { font-style: italic; color: var(--red); }
 }
 .btn::after {
   content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; z-index: -1; pointer-events: none;
-  background: linear-gradient(105deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
-  transform: translateX(-120%); will-change: transform;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 90%);
+  transform: translateX(-120%) skewX(-18deg); will-change: transform;
   animation: liquid-sheen 4.2s ease-in-out infinite;
 }
-@keyframes liquid-sheen { 0% { transform: translateX(-120%); } 45%, 100% { transform: translateX(340%); } }
+@keyframes liquid-sheen { 0% { transform: translateX(-120%) skewX(-18deg); } 45%, 100% { transform: translateX(340%) skewX(-18deg); } }
 .btn:hover { translate: 0 -1px; }
 .btn:active { scale: 0.97; }
 .btn .ic {
