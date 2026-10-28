@@ -278,7 +278,7 @@ svg { display: block; }
 .foot small { display: block; color: var(--muted); }
 
 /* ---------- Страница программы ---------- */
-.p-hero { position: relative; isolation: isolate; padding: calc(env(safe-area-inset-top) + 132px) var(--gutter) 28px; }
+.p-hero { position: relative; isolation: isolate; padding: calc(env(safe-area-inset-top) + 132px) var(--gutter) 10px; }
 .p-hero .aura::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(244, 239, 232, 0) 45%, var(--ivory) 100%);
@@ -317,6 +317,13 @@ svg { display: block; }
 .buy-inline .btn { height: 52px; padding-left: 20px; gap: 10px; font-size: 15px; white-space: nowrap; }
 .buy-inline .btn .ic { width: 36px; height: 36px; }
 .buy-inline.solo { padding: 8px; }
+@media (max-width: 380px) {
+  .buy-inline .price { font-size: 19px; }
+  .buy-inline .btn { font-size: 14px; padding-left: 14px; gap: 8px; }
+  .buy-inline .btn .ic { width: 32px; height: 32px; }
+  .buy-inline.with-note .btn .ic { display: none; }
+  .buy-inline.with-note .btn { padding: 0 16px; }
+}
 .buy-inline.with-note small { display: block; letter-spacing: 0.02em; font-size: 10px; }
 .buy-inline.with-note { padding-left: 16px; gap: 8px; }
 .buy-inline.with-note .btn { padding-left: 16px; gap: 8px; font-size: 14px; min-width: 0; }
@@ -330,7 +337,7 @@ svg { display: block; }
   background: rgba(251, 248, 244, 0.6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   text-decoration: none; font-size: 14px; font-weight: 600;
 }
-.p-body { padding: 20px var(--gutter) 8px; max-width: 760px; margin: 0 auto; display: grid; gap: 36px; }
+.p-body { padding: 8px var(--gutter) 8px; max-width: 760px; margin: 0 auto; display: grid; gap: 36px; }
 .p-body h3 { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1; margin: 0 0 18px; }
 .goals { list-style: none; margin: 0; padding: 0; }
 .goals li {
