@@ -294,7 +294,10 @@ function draw() {
   });
   app.querySelectorAll("[data-d]").forEach((el) => el.style.setProperty("--d", el.dataset.d));
   app.querySelectorAll("img[data-pos]").forEach((el) => (el.style.objectPosition = el.dataset.pos));
-  app.querySelectorAll("[data-vt]").forEach((el) => (el.style.viewTransitionName = el.dataset.vt));
+  // Блоки, которые человек уже видел на этой странице, при возврате показываем сразу, без повторной анимации
+  if (seenPages.has(location.pathname)) app.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("in"));
+  seenPages.add(location.pathname);
+  currentPath = location.pathname;
   observeReveal();
   watchBuybar();
 }
@@ -313,15 +316,27 @@ function transition(update) {
   document.startViewTransition(update);
 }
 
+// Где человек был на каждой странице: при возврате на главную («← Все курсы» или «назад» в браузере)
+// открываем её там же, где он нажал на курс, а не с самого верха
+const seenPages = new Set();
+const scrollPos = {};
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+function goTo(path, update) {
+  transition(() => {
+    update();
+    window.scrollTo({ top: path === "/" ? scrollPos["/"] || 0 : 0, behavior: "instant" });
+  });
+}
+
 function navigate(href) {
   const url = new URL(href, location.origin);
   const samePage = url.pathname === location.pathname;
+  scrollPos[location.pathname] = scrollY;
   history.pushState(null, "", url.pathname + url.search + url.hash);
   if (url.pathname === "/success") { successState = { kind: "loading" }; loadAccess(); }
-  transition(() => {
-    draw();
-    if (!samePage) window.scrollTo({ top: 0, behavior: "instant" });
-  });
+  if (samePage) return transition(draw);
+  goTo(url.pathname, draw);
 }
 
 let io;
@@ -352,7 +367,11 @@ document.addEventListener("click", (e) => {
   const card = e.target.closest(".mini[data-href]");
   if (card && !e.target.closest("a, button") && !getSelection().toString()) navigate(card.dataset.href);
 });
-window.addEventListener("popstate", () => transition(draw));
+let currentPath = location.pathname;
+window.addEventListener("popstate", () => {
+  scrollPos[currentPath] = scrollY;
+  goTo(location.pathname, draw);
+});
 
 const bar = document.getElementById("bar");
 const onScroll = () => bar.classList.toggle("solid", scrollY > 24);
