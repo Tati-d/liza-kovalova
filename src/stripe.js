@@ -63,7 +63,6 @@ export async function createCheckout(request, env) {
         product_data: { name: [P.title, P.tag].filter(Boolean).join(" — "), description: T.stripeDescription }
       }
     }],
-    allow_promotion_codes: true,
     billing_address_collection: "auto",
     success_url: `${env.APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.APP_URL}/p/${program.id}`,
