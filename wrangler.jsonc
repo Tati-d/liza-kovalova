@@ -30,7 +30,7 @@
     "APP_URL": "https://lizakovalova.com",
     // id закрытого канала (-100...) для каждой программы; одна программа = один канал,
     // несколько программ могут указывать на один канал
-    "CHANNELS": "{}"
+    "CHANNELS": "{\"back\":\"-1003625443111\",\"splits\":\"-1003725999391\",\"pilates\":\"-1003665201164\"}"
   }
   // Секреты (wrangler secret put ...): STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
   // BOT_TOKEN, TG_WEBHOOK_SECRET, ADMIN_KEY
