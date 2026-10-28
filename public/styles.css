@@ -206,11 +206,6 @@ svg { display: block; }
 .card .cover { position: relative; aspect-ratio: 5 / 4; }
 .card .cover .aura { transition: transform 1.2s var(--ease); }
 .card:hover .cover .aura { transform: scale(1.06); }
-.num {
-  position: absolute; top: 16px; left: 16px; z-index: 1;
-  font-family: var(--serif); font-size: 18px; padding: 6px 14px; border-radius: 999px;
-  background: rgba(251, 248, 244, 0.86);
-}
 .cover-title { position: absolute; left: 20px; right: 20px; bottom: 18px; z-index: 1; }
 .cover-title h3 {
   margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(38px, 11vw, 56px); line-height: 0.95; letter-spacing: -0.02em;

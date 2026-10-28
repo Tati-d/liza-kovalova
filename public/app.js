@@ -75,7 +75,7 @@ function homeView() {
         const P = t.programs[p.id];
         return `<article class="mini" data-href="/p/${p.id}" data-reveal data-d="${i}">
           <a class="mini-art" href="/p/${p.id}" data-link data-vt="cover-${p.id}" aria-label="${esc(P.title)}">
-            ${p.photo ? `<img src="${esc(p.photo.src)}" alt="" loading="lazy" decoding="async" data-pos="${esc(p.photo.pos)}">` : aura(p.id)}<span class="num">0${i + 1}</span>
+            ${p.photo ? `<img src="${esc(p.photo.src)}" alt="" loading="lazy" decoding="async" data-pos="${esc(p.photo.pos)}">` : aura(p.id)}
           </a>
           <div class="mini-body">
             <a class="mini-title" href="/p/${p.id}" data-link><h3 data-vt="title-${p.id}">${esc(P.title)}</h3></a>
