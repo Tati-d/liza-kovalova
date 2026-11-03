@@ -148,14 +148,12 @@ function programView(p) {
       <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
     </section>`}
     ${p.reviews ? `<section>
-      <div class="reviews-head" data-reveal>
-        <h3>${esc(t.reviewsTitle)}</h3>
-        <div class="reviews-nav">
-          <button type="button" class="rv-btn" data-rv="-1" aria-label="${esc(t.prev)}" disabled>${BACK}</button>
-          <button type="button" class="rv-btn" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
-        </div>
+      <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
+      <div class="reviews-box" data-reveal data-d="1">
+        <div class="reviews">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>
+        <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}" disabled>${BACK}</button>
+        <button type="button" class="rv-btn next" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
       </div>
-      <div class="reviews" data-reveal data-d="1">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>
     </section>` : ""}
     ${P.aims ? `<section>
       <h3 data-reveal>${esc(P.aimsTitle)}</h3>
@@ -368,7 +366,7 @@ function observeReveal() {
 
 // Стрелки ленты отзывов: листают на одну карточку, на краях гаснут
 function reviewsNav(strip) {
-  const [prev, next] = strip.previousElementSibling.querySelectorAll("[data-rv]");
+  const [prev, next] = strip.parentElement.querySelectorAll("[data-rv]");
   prev.disabled = strip.scrollLeft < 8;
   next.disabled = strip.scrollLeft > strip.scrollWidth - strip.clientWidth - 8;
 }
@@ -378,7 +376,7 @@ document.addEventListener("click", (e) => {
   if (buyBtn) return buy(buyBtn);
   const rv = e.target.closest("[data-rv]");
   if (rv) {
-    const strip = rv.closest(".reviews-head").nextElementSibling;
+    const strip = rv.parentElement.querySelector(".reviews");
     const step = strip.querySelector(".rv").getBoundingClientRect().width + 10;
     return strip.scrollBy({ left: step * Number(rv.dataset.rv), behavior: "smooth" });
   }
