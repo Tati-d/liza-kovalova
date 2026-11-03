@@ -15,7 +15,7 @@ export const I18N = {
     ],
     goalsTitle: "Результат",
     includedTitle: "Что входит в курс?",
-    reviewsTitle: "Отзывы", prev: "Назад", next: "Дальше",
+    reviewsTitle: "Отзывы", prev: "Назад", next: "Дальше", reviewsNote: "Результаты индивидуальны и зависят от регулярности занятий",
     // Общий список для курсов, у которых нет своего (programs.<id>.features)
     features: [
       "Все тренировки в записи",
@@ -244,7 +244,7 @@ export const I18N = {
     ],
     goalsTitle: "Результат",
     includedTitle: "Що входить у курс?",
-    reviewsTitle: "Відгуки", prev: "Назад", next: "Далі",
+    reviewsTitle: "Відгуки", prev: "Назад", next: "Далі", reviewsNote: "Результати індивідуальні й залежать від регулярності занять",
     features: [
       "Усі тренування в записі",
       "Тренуйся вдома у зручний для тебе час",

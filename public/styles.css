@@ -333,6 +333,7 @@ svg { display: block; }
 .rv-btn:focus { outline: none; }
 .rv-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .rv-btn { top: calc(50% - 14px); }
+.rv-note { display: block; text-align: center; margin-top: 6px; font-size: 12px; color: var(--muted); }
 .rv-count { display: block; text-align: center; margin-top: 10px; height: 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .buy-inline {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;

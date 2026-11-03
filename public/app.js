@@ -154,6 +154,7 @@ function programView(p) {
         <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}">${BACK}</button>
         <button type="button" class="rv-btn next" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
         <span class="rv-count">1 / ${p.reviews}</span>
+        ${p.reviewsNote ? `<small class="rv-note">${esc(t.reviewsNote)}</small>` : ""}
       </div>
     </section>` : ""}
     ${P.aims ? `<section>
