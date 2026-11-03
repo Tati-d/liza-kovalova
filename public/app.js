@@ -150,7 +150,7 @@ function programView(p) {
     ${p.reviews ? `<section>
       <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
       <div class="reviews-box" data-reveal data-d="1">
-        <div class="reviews">${Array.from({ length: p.reviews }, (_, k) => `<img class="${k ? "" : "cur"}" src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="${k ? "lazy" : "eager"}" decoding="async">`).join("")}</div>
+        <div class="reviews">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="${k < 3 ? "eager" : "lazy"}" decoding="async"></div>`).join("")}</div>
         <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}" disabled>${BACK}</button>
         <button type="button" class="rv-btn next" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
         <span class="rv-count">1 / ${p.reviews}</span>
@@ -365,28 +365,34 @@ function observeReveal() {
   requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove("no-anim")));
 }
 
-// Отзывы: один скриншот по центру, стрелки и свайп листают; на краях стрелка прячется
-function reviewsGo(box, dir) {
-  const imgs = [...box.querySelectorAll(".reviews img")];
-  const i = Math.min(imgs.length - 1, Math.max(0, imgs.findIndex((el) => el.classList.contains("cur")) + dir));
-  imgs.forEach((el, k) => el.classList.toggle("cur", k === i));
+// Отзывы: лента со снапом, активная карточка по центру. Скриншоты разной высоты, поэтому высота
+// ленты подстраивается под активную карточку (иначе под короткими — пустота). Стрелки — подсказка, что можно листать.
+function reviewsSync(strip) {
+  const slides = [...strip.children];
+  const mid = strip.scrollLeft + strip.clientWidth / 2;
+  let i = 0, best = Infinity;
+  slides.forEach((el, k) => {
+    const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+    if (d < best) { best = d; i = k; }
+  });
+  strip.style.height = `${slides[i].offsetHeight}px`;
+  const box = strip.parentElement;
   const [prev, next] = box.querySelectorAll("[data-rv]");
   prev.disabled = i === 0;
-  next.disabled = i === imgs.length - 1;
-  box.querySelector(".rv-count").textContent = `${i + 1} / ${imgs.length}`;
+  next.disabled = i === slides.length - 1;
+  box.querySelector(".rv-count").textContent = `${i + 1} / ${slides.length}`;
 }
-let swipeX = null;
-document.addEventListener("pointerdown", (e) => { swipeX = e.target.closest(".reviews-box") ? e.clientX : null; });
-document.addEventListener("pointerup", (e) => {
-  const box = e.target.closest(".reviews-box");
-  if (swipeX !== null && box && Math.abs(e.clientX - swipeX) > 40) reviewsGo(box, e.clientX < swipeX ? 1 : -1);
-  swipeX = null;
-});
+document.addEventListener("scroll", (e) => { if (e.target.classList?.contains("reviews")) reviewsSync(e.target); }, { capture: true, passive: true });
+document.addEventListener("load", (e) => { const strip = e.target.closest?.(".reviews"); if (strip) reviewsSync(strip); }, true);
 document.addEventListener("click", (e) => {
   const buyBtn = e.target.closest("[data-buy]");
   if (buyBtn) return buy(buyBtn);
   const rv = e.target.closest("[data-rv]");
-  if (rv) return reviewsGo(rv.parentElement, Number(rv.dataset.rv));
+  if (rv) {
+    const strip = rv.parentElement.querySelector(".reviews");
+    const step = strip.firstElementChild.offsetWidth + 12;
+    return strip.scrollBy({ left: step * Number(rv.dataset.rv), behavior: "smooth" });
+  }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {
     lang = langBtn.dataset.lang;
