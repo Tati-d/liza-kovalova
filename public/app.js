@@ -365,8 +365,8 @@ function observeReveal() {
   requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove("no-anim")));
 }
 
-// Отзывы: лента со снапом, активная карточка по центру. Скриншоты разной высоты, поэтому высота
-// ленты подстраивается под активную карточку (иначе под короткими — пустота). Стрелки — подсказка, что можно листать.
+// Отзывы: лента со снапом, активная карточка по центру. Высота ленты — по самому длинному отзыву,
+// чтобы страница под ней не прыгала. Стрелки — подсказка, что можно листать; на краях прячутся.
 function reviewsSync(strip) {
   const slides = [...strip.children];
   const mid = strip.scrollLeft + strip.clientWidth / 2;
@@ -375,7 +375,6 @@ function reviewsSync(strip) {
     const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
     if (d < best) { best = d; i = k; }
   });
-  strip.style.height = `${slides[i].offsetHeight}px`;
   const box = strip.parentElement;
   const [prev, next] = box.querySelectorAll("[data-rv]");
   prev.disabled = i === 0;
@@ -383,7 +382,6 @@ function reviewsSync(strip) {
   box.querySelector(".rv-count").textContent = `${i + 1} / ${slides.length}`;
 }
 document.addEventListener("scroll", (e) => { if (e.target.classList?.contains("reviews")) reviewsSync(e.target); }, { capture: true, passive: true });
-document.addEventListener("load", (e) => { const strip = e.target.closest?.(".reviews"); if (strip) reviewsSync(strip); }, true);
 document.addEventListener("click", (e) => {
   const buyBtn = e.target.closest("[data-buy]");
   if (buyBtn) return buy(buyBtn);
