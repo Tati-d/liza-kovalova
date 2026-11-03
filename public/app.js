@@ -151,7 +151,7 @@ function programView(p) {
       <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
       <div class="reviews-box" data-reveal data-d="1">
         <div class="reviews">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="${k < 3 ? "eager" : "lazy"}" decoding="async"></div>`).join("")}</div>
-        <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}" disabled>${BACK}</button>
+        <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}">${BACK}</button>
         <button type="button" class="rv-btn next" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
         <span class="rv-count">1 / ${p.reviews}</span>
       </div>
@@ -366,7 +366,7 @@ function observeReveal() {
 }
 
 // Отзывы: лента со снапом, активная карточка по центру. Высота ленты — по самому длинному отзыву,
-// чтобы страница под ней не прыгала. Стрелки — подсказка, что можно листать; на краях прячутся.
+// чтобы страница под ней не прыгала. Стрелки листают по кругу: после последней — первая.
 function reviewsSync(strip) {
   const slides = [...strip.children];
   const mid = strip.scrollLeft + strip.clientWidth / 2;
@@ -375,11 +375,8 @@ function reviewsSync(strip) {
     const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
     if (d < best) { best = d; i = k; }
   });
-  const box = strip.parentElement;
-  const [prev, next] = box.querySelectorAll("[data-rv]");
-  prev.disabled = i === 0;
-  next.disabled = i === slides.length - 1;
-  box.querySelector(".rv-count").textContent = `${i + 1} / ${slides.length}`;
+  strip.parentElement.querySelector(".rv-count").textContent = `${i + 1} / ${slides.length}`;
+  return i;
 }
 document.addEventListener("scroll", (e) => { if (e.target.classList?.contains("reviews")) reviewsSync(e.target); }, { capture: true, passive: true });
 document.addEventListener("click", (e) => {
@@ -388,8 +385,10 @@ document.addEventListener("click", (e) => {
   const rv = e.target.closest("[data-rv]");
   if (rv) {
     const strip = rv.parentElement.querySelector(".reviews");
-    const step = strip.firstElementChild.offsetWidth + 12;
-    return strip.scrollBy({ left: step * Number(rv.dataset.rv), behavior: "smooth" });
+    const n = strip.children.length;
+    const i = (reviewsSync(strip) + Number(rv.dataset.rv) + n) % n;
+    const el = strip.children[i];
+    return strip.scrollTo({ left: el.offsetLeft + el.offsetWidth / 2 - strip.clientWidth / 2, behavior: "smooth" });
   }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {

@@ -330,7 +330,6 @@ svg { display: block; }
 .rv-btn svg { width: 18px; height: 18px; }
 .rv-btn:hover { background: rgba(255, 255, 255, 0.6); }
 .rv-btn:active { scale: 0.92; translate: 0 -50%; }
-.rv-btn:disabled { opacity: 0; pointer-events: none; }
 .rv-btn:focus { outline: none; }
 .rv-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .rv-btn { top: calc(50% - 14px); }
