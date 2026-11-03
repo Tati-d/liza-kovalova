@@ -150,7 +150,7 @@ function programView(p) {
     ${p.reviews ? `<section>
       <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
       <div class="reviews-box" data-reveal data-d="1">
-        <div class="reviews">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="${k < 3 ? "eager" : "lazy"}" decoding="async"></div>`).join("")}</div>
+        <div class="reviews">${[p.reviews, ...Array.from({ length: p.reviews }, (_, k) => k + 1), 1].map((n, k) => `<div class="rv"${k === 0 || k > p.reviews ? ' data-clone=""' : ""}><img src="/media/reviews/${p.id}-${n}.jpg" alt="" loading="${k < 3 || k > p.reviews ? "eager" : "lazy"}" decoding="async"></div>`).join("")}</div>
         <button type="button" class="rv-btn prev" data-rv="-1" aria-label="${esc(t.prev)}">${BACK}</button>
         <button type="button" class="rv-btn next" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
         <span class="rv-count">1 / ${p.reviews}</span>
@@ -311,6 +311,7 @@ function draw(scrollTop) {
   currentPath = location.pathname;
   observeReveal();
   watchBuybar();
+  initReviews();
 }
 
 let barIo;
@@ -365,18 +366,38 @@ function observeReveal() {
   requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove("no-anim")));
 }
 
-// Отзывы: лента со снапом, активная карточка по центру. Высота ленты — по самому длинному отзыву,
-// чтобы страница под ней не прыгала. Стрелки листают по кругу: после последней — первая.
-function reviewsSync(strip) {
-  const slides = [...strip.children];
+// Отзывы: лента со снапом, активная карточка по центру, высота — по самому длинному отзыву.
+// Лента бесконечная: по краям — дубли последней и первой карточки (data-clone). Докрутив до дубля,
+// незаметно перепрыгиваем на настоящую карточку, так что после 9-й вправо идёт 1-я.
+function rvIndex(strip) {
   const mid = strip.scrollLeft + strip.clientWidth / 2;
   let i = 0, best = Infinity;
-  slides.forEach((el, k) => {
+  [...strip.children].forEach((el, k) => {
     const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
     if (d < best) { best = d; i = k; }
   });
-  strip.parentElement.querySelector(".rv-count").textContent = `${i + 1} / ${slides.length}`;
   return i;
+}
+function rvScrollTo(strip, i, behavior) {
+  const el = strip.children[i];
+  strip.scrollTo({ left: el.offsetLeft + el.offsetWidth / 2 - strip.clientWidth / 2, behavior });
+}
+function reviewsSync(strip) {
+  const n = strip.children.length - 2;
+  const i = rvIndex(strip);
+  strip.parentElement.querySelector(".rv-count").textContent = `${((i - 1 + n) % n) + 1} / ${n}`;
+  clearTimeout(strip.rvTimer);
+  // Прокрутка остановилась на дубле — прыгаем на настоящую карточку
+  strip.rvTimer = setTimeout(() => {
+    const j = rvIndex(strip);
+    if (j === 0) rvScrollTo(strip, n, "instant");
+    else if (j === n + 1) rvScrollTo(strip, 1, "instant");
+  }, 150);
+}
+function initReviews() {
+  // Сразу после innerHTML прокрутка внутри view transition не применяется — ставим её следующей задачей
+  const strips = [...app.querySelectorAll(".reviews")];
+  if (strips.length) setTimeout(() => strips.forEach((strip) => rvScrollTo(strip, 1, "instant")), 0);
 }
 document.addEventListener("scroll", (e) => { if (e.target.classList?.contains("reviews")) reviewsSync(e.target); }, { capture: true, passive: true });
 document.addEventListener("click", (e) => {
@@ -385,10 +406,7 @@ document.addEventListener("click", (e) => {
   const rv = e.target.closest("[data-rv]");
   if (rv) {
     const strip = rv.parentElement.querySelector(".reviews");
-    const n = strip.children.length;
-    const i = (reviewsSync(strip) + Number(rv.dataset.rv) + n) % n;
-    const el = strip.children[i];
-    return strip.scrollTo({ left: el.offsetLeft + el.offsetWidth / 2 - strip.clientWidth / 2, behavior: "smooth" });
+    return rvScrollTo(strip, rvIndex(strip) + Number(rv.dataset.rv), "smooth");
   }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {
