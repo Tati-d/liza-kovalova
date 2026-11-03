@@ -148,8 +148,14 @@ function programView(p) {
       <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
     </section>`}
     ${p.reviews ? `<section>
-      <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
-      <div class="reviews" data-reveal data-d="1">${Array.from({ length: p.reviews }, (_, k) => `<img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="lazy" decoding="async">`).join("")}</div>
+      <div class="reviews-head" data-reveal>
+        <h3>${esc(t.reviewsTitle)}</h3>
+        <div class="reviews-nav">
+          <button type="button" class="rv-btn" data-rv="-1" aria-label="${esc(t.prev)}" disabled>${BACK}</button>
+          <button type="button" class="rv-btn" data-rv="1" aria-label="${esc(t.next)}">${ARROW}</button>
+        </div>
+      </div>
+      <div class="reviews" data-reveal data-d="1">${Array.from({ length: p.reviews }, (_, k) => `<div class="rv"><img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>
     </section>` : ""}
     ${P.aims ? `<section>
       <h3 data-reveal>${esc(P.aimsTitle)}</h3>
@@ -360,9 +366,22 @@ function observeReveal() {
   requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove("no-anim")));
 }
 
+// Стрелки ленты отзывов: листают на одну карточку, на краях гаснут
+function reviewsNav(strip) {
+  const [prev, next] = strip.previousElementSibling.querySelectorAll("[data-rv]");
+  prev.disabled = strip.scrollLeft < 8;
+  next.disabled = strip.scrollLeft > strip.scrollWidth - strip.clientWidth - 8;
+}
+document.addEventListener("scroll", (e) => { if (e.target.classList?.contains("reviews")) reviewsNav(e.target); }, { capture: true, passive: true });
 document.addEventListener("click", (e) => {
   const buyBtn = e.target.closest("[data-buy]");
   if (buyBtn) return buy(buyBtn);
+  const rv = e.target.closest("[data-rv]");
+  if (rv) {
+    const strip = rv.closest(".reviews-head").nextElementSibling;
+    const step = strip.querySelector(".rv").getBoundingClientRect().width + 10;
+    return strip.scrollBy({ left: step * Number(rv.dataset.rv), behavior: "smooth" });
+  }
   const langBtn = e.target.closest(".lang button");
   if (langBtn) {
     lang = langBtn.dataset.lang;
