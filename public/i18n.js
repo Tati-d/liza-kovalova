@@ -15,6 +15,7 @@ export const I18N = {
     ],
     goalsTitle: "Результат",
     includedTitle: "Что входит в курс?",
+    reviewsTitle: "Отзывы",
     // Общий список для курсов, у которых нет своего (programs.<id>.features)
     features: [
       "Все тренировки в записи",
@@ -243,6 +244,7 @@ export const I18N = {
     ],
     goalsTitle: "Результат",
     includedTitle: "Що входить у курс?",
+    reviewsTitle: "Відгуки",
     features: [
       "Усі тренування в записі",
       "Тренуйся вдома у зручний для тебе час",

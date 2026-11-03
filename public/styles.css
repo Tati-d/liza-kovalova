@@ -300,6 +300,16 @@ svg { display: block; }
 }
 .media figcaption { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font-size: 12px; color: var(--ink-2); }
 .media .play { width: 56px; height: 56px; }
+/* Отзывы: скриншоты из чата, горизонтальная лента со снапом */
+.reviews {
+  display: flex; gap: 10px; margin: 0 calc(-1 * var(--gutter)); padding: 4px var(--gutter) 10px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.reviews::-webkit-scrollbar { display: none; }
+.reviews img {
+  flex: 0 0 min(82%, 320px); min-width: 0; width: min(82%, 320px); scroll-snap-align: start; border-radius: 18px; display: block; height: auto; align-self: start;
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.35);
+}
 .buy-inline {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 6px 6px 6px 20px; border-radius: 999px;

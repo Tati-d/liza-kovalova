@@ -147,6 +147,10 @@ function programView(p) {
       <h3 data-reveal>${esc(t.includedTitle)}</h3>
       <div class="panel" data-reveal data-d="1"><ul class="checks">${(P.features || t.features).map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
     </section>`}
+    ${p.reviews ? `<section>
+      <h3 data-reveal>${esc(t.reviewsTitle)}</h3>
+      <div class="reviews" data-reveal data-d="1">${Array.from({ length: p.reviews }, (_, k) => `<img src="/media/reviews/${p.id}-${k + 1}.jpg" alt="" loading="lazy" decoding="async">`).join("")}</div>
+    </section>` : ""}
     ${P.aims ? `<section>
       <h3 data-reveal>${esc(P.aimsTitle)}</h3>
       <div class="aims">${P.aims.map(([emoji, title, text], k) => `<article class="aim" data-reveal data-d="${k % 2}">

@@ -6,18 +6,20 @@
 // media — фото или видео на странице курса (sound: true — видео с голосом, запускается по нажатию).
 // media — фото или видео из тренировки (горизонтальное, 16:9): { type: "video", src: "/media/back.mp4", poster: "/media/back.jpg" }
 // или { type: "image", src: "/media/back.jpg" } (tall: true — вертикальное фото, квадратный кадр); файлы кладутся в public/media/. Тексты — в i18n.js.
+// reviews — число скриншотов отзывов в public/media/reviews/<id>-1.jpg … <id>-N.jpg (лента под «Что входит»).
 export const CURRENCY = "eur";
 
 export const PROGRAMS = [
   { id: "back",    price: 999,  accessDays: 30,   aura: ["#e9c9b8", "#a8705c", "#f4e6dc"],
     photo: { src: "/media/back.jpg", pos: "40% 50%" },
-    media: { type: "video", src: "/media/back.mp4", poster: "/media/back-poster.jpg", sound: true } },
+    media: { type: "video", src: "/media/back.mp4", poster: "/media/back-poster.jpg", sound: true },
+    reviews: 9 },
   { id: "splits",  price: 999,  accessDays: 30,   aura: ["#e8c6cf", "#94505f", "#f5e4e8"],
     photo: { src: "/media/splits.jpg", pos: "46% 50%" },
-    media: { type: "image", src: "/media/splits.jpg" } },
+    media: { type: "video", src: "/media/splits.mp4", poster: "/media/splits-poster.jpg", sound: true } },
   { id: "pilates", price: 1499, accessDays: 30,   aura: ["#d6ddd2", "#6f8a72", "#ebefe7"],
     photo: { src: "/media/pilates.jpg", pos: "44% 50%" },
-    media: { type: "image", src: "/media/pilates.jpg" } },
+    media: { type: "video", src: "/media/pilates.mp4", poster: "/media/pilates-poster.jpg", sound: true } },
   { id: "personal", price: null, listPrice: 5000, contact: "https://wa.me/4915560740296", aura: ["#e6c3b0", "#7a4a3c", "#f2e2d8"],
     photo: { src: "/media/personal.jpg", pos: "50% 50%" },
     media: { type: "image", src: "/media/personal.jpg", tall: true } }
